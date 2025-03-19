@@ -1,0 +1,76 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+.custom-steps .ant-steps-item-title,
+.custom-steps .ant-steps-item-description {
+  color: white !important;
+}
+
+.custom-steps
+  .ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-icon
+  > .ant-steps-icon {
+  color: white !important;
+}
+
+.custom-steps
+  .ant-steps-item-process
+  > .ant-steps-item-container
+  > .ant-steps-item-content {
+  color: white !important;
+}
+
+.custom-steps
+  .ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-content {
+  color: white !important;
+}
+
+.custom-steps .ant-steps-item-icon > .ant-steps-icon {
+  color: white !important;
+}
+.custom-steps .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+  color: white !important;
+}
+
+.form-item label {
+  color: white !important;
+}
+
+.rotate {
+  animation: rotate360 4s linear infinite;
+}
+
+@keyframes rotate360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.custom-rate .ant-rate-star-zero svg {
+  stroke: orange !important;
+  stroke-width: 20px !important;
+  fill: transparent !important;
+}
+
+.custom-rate .ant-rate-star-full svg {
+  fill: orange !important;
+  stroke: none !important;
+}
+
+.custom-rate .ant-rate-star:hover svg {
+  stroke: orange !important;
+  stroke-width: 20px !important;
+}
