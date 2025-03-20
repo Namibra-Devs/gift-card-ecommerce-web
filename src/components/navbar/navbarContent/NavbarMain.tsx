@@ -6,17 +6,18 @@ import CloseIcon from "../../../../public/icons/close.png";
 import isAuthenticated from "./navMenus/User";
 import Search from "./search/Search";
 import NavMenus from "./navMenus/NavMenus";
+
 const NavbarMain = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
     <>
       {/* NavbarMain */}
       <div className="flex items-center justify-between px-[200px] py-3">
-        <div className="flex items-center gap-[10px]">
+        <a href="/" className="flex items-center gap-[10px]">
           {/* Logo */}
           <img src={FavIcon} alt="PrepaidBanc" />
           <Search />
-        </div>
+        </a>
 
         <NavMenus />
 
