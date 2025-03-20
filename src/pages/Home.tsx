@@ -1,8 +1,13 @@
+import Navbar from "../components/navbar/Navbar";
+
 const Home = () => {
   return (
-    <div className="text-red-500 text-4xl text-center">
-      Gift Card And E-commerce
-    </div>
+    <>
+    <Navbar/>
+      <div className="text-red-500 text-4xl text-center mt-60">
+        Home
+      </div>
+    </>
   );
 };
 
