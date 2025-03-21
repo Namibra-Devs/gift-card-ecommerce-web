@@ -3,21 +3,24 @@ import { useState } from "react";
 import HambuggerIcon from "../../../../public/icons/menu.png";
 import FavIcon from "../../../../public/favicon.png";
 import CloseIcon from "../../../../public/icons/close.png";
-import isAuthenticated from "./navMenus/User";
 import Search from "./search/Search";
 import NavMenus from "./navMenus/NavMenus";
 
-const NavbarMain = () => {
+const NavbarMain = ({isAuthenticated}) => {
   const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <>
       {/* NavbarMain */}
       <div className="flex items-center justify-between px-[200px] py-3">
-        <a href="/" className="flex items-center gap-[10px]">
+        <div className="flex items-center gap-[10px]">
           {/* Logo */}
-          <img src={FavIcon} alt="PrepaidBanc" />
+          <a href="/">
+            <img src={FavIcon} alt="PrepaidBanc" />
+          </a>
+
           <Search />
-        </a>
+        </div>
 
         <NavMenus />
 
@@ -40,7 +43,7 @@ const NavbarMain = () => {
             className="md:hidden flex flex-col items-start bg-white px-6 py-4 shadow-md"
           >
             <span className="py-2">Help</span>
-            {isAuthenticated() ? (
+            {isAuthenticated ? (
               <>
                 <span className="py-2">Account</span>
                 <span className="py-2">Orders</span>

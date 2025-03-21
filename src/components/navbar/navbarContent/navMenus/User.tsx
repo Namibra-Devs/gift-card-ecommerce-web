@@ -3,20 +3,22 @@ import { useState } from "react";
 import UserIcon from "../../../../../public/icons/user-line.png";
 const User = () => {
   const [userOpen, setUserOpen] = useState(false);
-  const isAuthenticated = true; // Replace with actual auth state
-
+  const isAuthenticated = false; // 
   return (
     <>
-      {isAuthenticated ? (
+
         <div className="relative">
           <div
             onClick={() => setUserOpen(!userOpen)}
             className={`flex items-center gap-2 cursor-pointer p-[6px] ${userOpen ? "bg-greylight rounded-[4px]" : ""} `}
           >
             <img src={UserIcon} alt="User" className="" />
-            <span className="text-greynormal">Paul</span>
+            {isAuthenticated ? (
+              <span className="text-greynormal">Paul</span>
+            ) : (
+              <a href="/login" className="text-greynormal">Login</a>)}
           </div>
-          {userOpen && (
+          {isAuthenticated && userOpen && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -33,9 +35,6 @@ const User = () => {
             </motion.div>
           )}
         </div>
-      ) : (
-        <span className="text-greynormal cursor-pointer">Login</span>
-      )}
     </>
   );
 };

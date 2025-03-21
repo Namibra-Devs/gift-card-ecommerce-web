@@ -1,9 +1,11 @@
+import ProductCategories from "./productCategories";
 
-
-const homeContent = () => {
+const HomeContent = () => {
   return (
-    <div>homeContent</div>
-  )
-}
+    <div className=" pb-5 pt-3 ">
+      <ProductCategories />
+    </div>
+  );
+};
 
-export default homeContent
+export default HomeContent;
