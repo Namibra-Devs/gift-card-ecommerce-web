@@ -3,7 +3,7 @@ import { useState } from "react";
 import UserIcon from "../../../../../public/icons/user-line.png";
 const User = () => {
   const [userOpen, setUserOpen] = useState(false);
-  const isAuthenticated = false; // 
+  const isAuthenticated = true; // 
   return (
     <>
 

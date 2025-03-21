@@ -12,7 +12,7 @@ const NavbarMain = ({isAuthenticated}) => {
   return (
     <>
       {/* NavbarMain */}
-      <div className="flex items-center justify-between px-[200px] py-3">
+      <div className="flex items-center justify-between px-4 md:px-[150px] py-3">
         <div className="flex items-center gap-[10px]">
           {/* Logo */}
           <a href="/">

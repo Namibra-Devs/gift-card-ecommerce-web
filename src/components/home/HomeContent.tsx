@@ -1,8 +1,8 @@
-import ProductCategories from "./productCategories";
+import ProductCategories from "./ProductCategories";
 
 const HomeContent = () => {
   return (
-    <div className=" pb-5 pt-3 ">
+    <div className=" pb-5 pt-3">
       <ProductCategories />
     </div>
   );
