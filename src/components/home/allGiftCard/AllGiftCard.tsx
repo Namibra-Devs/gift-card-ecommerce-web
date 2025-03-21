@@ -4,10 +4,10 @@ import Banner from "../Banner";
 
 const AllGiftCard = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 gap-y-14">
       {AllGiftCardItems.map((item, index) => (
         <>
-        <GiftCard key={item.id} item={item} />
+        <GiftCard key={item.id} item={item}/>
         {index === 5 && <Banner />}
         </>
       ))}
