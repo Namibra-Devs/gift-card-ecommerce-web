@@ -100,12 +100,12 @@ const RegisterAcc = () => {
           <div className="flex space-x-2">
             <div className="flex flex-col">
               <label htmlFor="FirstName" className="text-greynegative mb-3">
-                FirstName
+                First Name
               </label>
               <input
                 type="text"
                 name="firstName"
-                placeholder="First Name"
+                placeholder=""
                 value={formData.firstName}
                 onChange={handleChange}
                 required
@@ -119,7 +119,7 @@ const RegisterAcc = () => {
               <input
                 type="text"
                 name="lastName"
-                placeholder="Surname"
+                placeholder=""
                 value={formData.lastName}
                 onChange={handleChange}
                 required
@@ -150,7 +150,7 @@ const RegisterAcc = () => {
             <input
               type="text"
               name="referralCode"
-              placeholder="Referral Code"
+              placeholder=""
               value={formData.referralCode}
               onChange={handleChange}
               className="w-full bg-greylight px-[24px] py-[13px] rounded-[8px]"
