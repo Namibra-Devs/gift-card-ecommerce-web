@@ -1,7 +1,10 @@
+import LoginWithOTP from "../components/login/LoginWithOTP"
 
 const Login = () => {
   return (
-    <div>Login</div>
+    <>
+      <LoginWithOTP/>
+    </>
   )
 }
 

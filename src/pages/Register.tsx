@@ -1,7 +1,9 @@
-
+import RegisterAcc from "../components/register/RegisterAcc"
 const Register = () => {
   return (
-    <div>Register</div>
+    <>
+      <RegisterAcc />
+    </>
   )
 }
 

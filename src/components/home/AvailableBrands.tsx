@@ -12,7 +12,7 @@ const AvailableBrands: React.FC = () => {
   return (
     <div className="px-4 md:px-[255px] py-20">
       <h2 className="text-[20px] font-medium text-greynormal mb-16">Available Brands</h2>
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-8 justify-between place-items-center w-full">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-8 place-self-auto md:place-items-center  w-full">
         {brands.map((brand, index) => (
           <div
             key={index} 

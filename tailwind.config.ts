@@ -11,6 +11,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        linkcolor: "#5555CB",
         white: "#FFFFFF",
         grey: "#707070",
         greynormal: "#0D0D0E",
