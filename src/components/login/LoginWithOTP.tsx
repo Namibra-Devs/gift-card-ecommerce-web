@@ -1,6 +1,8 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { BiLoader } from 'react-icons/bi';
 import { FaCircleCheck, FaExclamation } from 'react-icons/fa6';
+import { useAuth } from '../../context/useAuth';
 
 const LoginWithOTP = () => {
   const [email, setEmail] = useState('');
@@ -9,6 +11,7 @@ const LoginWithOTP = () => {
   const [step, setStep] = useState(1); // 1: Email input, 2: OTP input
   const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const {login}= useAuth();
 
   // Handle Email Submission
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -17,26 +20,16 @@ const LoginWithOTP = () => {
     setErrorMessage('');
 
     try {
-      const response = await fetch('https://gift-card-ecommerce-api.onrender.com/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      await axios.post('https://gift-card-ecommerce-api.onrender.com/api/auth/login', {
+        email,
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        setStatus('error');
-        setErrorMessage(data.error || 'Failed to send OTP. Try again.');
-        setTimeout(() => setStatus('idle'), 3000);
-        return;
-      }
-      
       setStatus('success');
       setTimeout(() => setStep(2), 1000);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       setStatus('error');
-      setErrorMessage('Network error. Please try again.');
+      setErrorMessage(error.response?.data?.error || 'Failed to send OTP. Try again.');
       setTimeout(() => setStatus('idle'), 3000);
     }
   };
@@ -48,28 +41,22 @@ const LoginWithOTP = () => {
     setErrorMessage('');
 
     try {
-      const response = await fetch('https://gift-card-ecommerce-api.onrender.com/api/auth/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp, rememberMe }),
+      const response = await axios.post('https://gift-card-ecommerce-api.onrender.com/api/auth/verify', {
+        email,
+        otp,
+        rememberMe,
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        setStatus('error');
-        setErrorMessage(data.error || 'Invalid OTP. Try again.');
-        setTimeout(() => setStatus('idle'), 3000);
-        return;
-      }
-      
+      const data = response.data;
       setStatus('success');
+      login(data.token); // Update authentication state
       setTimeout(() => {
         window.location.href = '/home';
       }, 1000);
-    } catch (error) {
-    console.error(error);
+    } catch (error: any) {
+      console.error(error);
       setStatus('error');
-      setErrorMessage('Network error. Please try again.');
+      setErrorMessage(error.response?.data?.error || 'Invalid OTP. Try again.');
       setTimeout(() => setStatus('idle'), 3000);
     }
   };
@@ -98,7 +85,7 @@ const LoginWithOTP = () => {
       {/* Form */}
       <form onSubmit={step === 1 ? handleEmailSubmit : handleOtpSubmit} className="bg-white rounded-[24px] p-[60px] w-full md:w-[514px]">
         <div className="flex flex-col items-center text-center space-y-8 mb-6">
-          <div><img src="/favicon.png" alt="PrepaidBanc" /></div>
+          <a href='/'><img src="/favicon.png" alt="PrepaidBanc" /></a>
           <p className="text-greynormal">
             {step === 1 ? 'Please enter your email' : 'Enter the password sent to your email'}
           </p>

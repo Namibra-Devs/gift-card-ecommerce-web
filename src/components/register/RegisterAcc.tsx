@@ -69,7 +69,11 @@ const RegisterAcc = () => {
         });
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Registration failed");
+      } else {
+        setError("Registration failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -79,21 +83,25 @@ const RegisterAcc = () => {
     <div className="flex justify-center items-center min-h-screen px-4 py-20 bg-greylight">
       <div className="bg-white p-[40px] rounded-[24px] w-full max-w-lg">
         {/* Logo */}
-        <div className="flex items-center justify-center mb-6">
+        <a href="/" className="flex items-center justify-center mb-6">
           <img src="/favicon.png" alt="PrepaidBanc" />
+        </a>
+
+        <div className="flex flex-wrap justify-between items-center">
+          {/* Sign-in Link */}
+          <p className="text-sm text-gray-500 text-left">
+            Already have an account?
+            <a href="/login" className="text-linkcolor underline ml-2">
+              Sign in
+            </a>
+          </p>
+
+         <div>
+           {/* Status Messages */}
+           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          {success && <p className="text-green-500 text-sm mt-2">{success}</p>}
+         </div>
         </div>
-
-        {/* Sign-in Link */}
-        <p className="text-sm text-gray-500 text-left">
-          Already have an account?
-          <a href="/login" className="text-linkcolor underline ml-2">
-            Sign in
-          </a>
-        </p>
-
-        {/* Status Messages */}
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-        {success && <p className="text-green-500 text-sm mt-2">{success}</p>}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
@@ -158,63 +166,64 @@ const RegisterAcc = () => {
           </div>
           {/* Phone Number Field */}
           <div className="flex flex-col">
-              <label htmlFor="phoneNumber" className="text-greynegative mb-3">
-                Phone Number
-              </label>
-          <div className="flex space-x-2">
-            <select
-              name="countryCode"
-              value={formData.countryCode}
-              onChange={handleCountryChange}
-              className="bg-transparent focus:outline-none border border-greylight p-3 w-1/4 rounded-[8px]"
-            >
-              {countries.map((country) => (
-                <option key={country.code} value={country.code}>
-                  {country.flag} {country.code}
-                </option>
-              ))}
-            </select>
+            <label htmlFor="phoneNumber" className="text-greynegative mb-3">
+              Phone Number
+            </label>
+            <div className="flex space-x-2 relative">
+              <select
+                name="countryCode"
+                value={formData.countryCode}
+                onChange={handleCountryChange}
+                className="bg-transparent focus:outline-none border border-greylight p-3 w-1/4 rounded-[8px]"
+              >
+             
+                {countries.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.flag} {country.code}
+                  </option>
+                ))}
+              </select>
 
+              <input
+                type="text"
+                name="phone"
+                placeholder="0200000000"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                className="w-full bg-greylight px-[24px] py-[13px] rounded-[8px]"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="password" className="text-greynegative mb-3">
+              Password
+            </label>
             <input
-              type="text"
-              name="phone"
-              placeholder="0200000000"
-              value={formData.phone}
+              type="password"
+              name="password"
+              placeholder="***********"
+              value={formData.password}
               onChange={handleChange}
               required
               className="w-full bg-greylight px-[24px] py-[13px] rounded-[8px]"
             />
           </div>
-          </div>
 
           <div className="flex flex-col">
-              <label htmlFor="password" className="text-greynegative mb-3">
-                Password
-              </label>
-          <input
-            type="password"
-            name="password"
-            placeholder="***********"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full bg-greylight px-[24px] py-[13px] rounded-[8px]"
-          />
-          </div>
-
-          <div className="flex flex-col">
-              <label htmlFor="comfirmPassword" className="text-greynegative mb-3">
-                Comfirm Password
-              </label>
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="***********"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-            className="w-full bg-greylight px-[24px] py-[13px] rounded-[8px]"
-          />
+            <label htmlFor="comfirmPassword" className="text-greynegative mb-3">
+              Comfirm Password
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="***********"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              className="w-full bg-greylight px-[24px] py-[13px] rounded-[8px]"
+            />
           </div>
 
           {/* Checkbox */}
