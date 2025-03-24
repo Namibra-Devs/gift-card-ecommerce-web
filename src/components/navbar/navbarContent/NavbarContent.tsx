@@ -5,7 +5,7 @@ const NavbarContent = () => {
   return (
     <div className="bg-white">
       <NavbarMini />
-      <NavbarMain />
+      <NavbarMain isAuthenticated={false} />
     </div>
   );
 };

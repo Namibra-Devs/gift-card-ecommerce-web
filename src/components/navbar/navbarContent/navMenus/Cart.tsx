@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import CartIcon from "../../../../../public/icons/shopping-cart.png";
+import { useAuth } from "../../../../context/useAuth";
 
 const Cart = () => {
   const [cartOpen, setCartOpen] = useState(false);
-  const isAuthenticated = true; // Replace with actual auth state
+  const isAuthenticated = useAuth();
   return (
     <>
       <div className="relative">
         <div
-          className={`flex items-center gap-2 cursor-pointer p-[6px] ${
-            cartOpen ? "bg-greylight rounded-[4px]" : ""
+          className={`flex items-center gap-2 cursor-pointer rounded-[4px] p-[6px] ${
+            cartOpen ? "bg-greylight " : "hover:bg-greylight duration-700"
           } `}
           onClick={() => setCartOpen(!cartOpen)}
         >
