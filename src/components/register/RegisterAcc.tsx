@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { countries } from "./CountryCodes";
+import api from "../../context/api";
 const RegisterAcc = () => {
   const [formData, setFormData] = useState({
     firstName: "",

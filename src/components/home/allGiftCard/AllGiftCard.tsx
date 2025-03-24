@@ -1,55 +1,50 @@
-import { useEffect, useState } from "react";
-import GiftCard from "./GiftCard"
-
+// import { useEffect, useState } from "react";
+import GiftCard from "./GiftCard";
+// import { FiLoader } from "react-icons/fi";
 import Banner from "../Banner";
-import { GiftCardItem } from "../../../context/Type";
-import axios from "axios";
+// import { GiftCardItem } from "../../../context/Type";
+// import api from "../../../context/api"; // Import Axios 
+import { AllGiftCardItems } from "../../../assets/Data";
 
 const AllGiftCard = () => {
-  const [giftCards, setGiftCards] = useState<GiftCardItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  // const [giftCards, setGiftCards] = useState<GiftCardItem[]>([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchGiftCards = async () => {
-      try {  
-        const token = import.meta.env.VITE_API_TOKEN;
+  // useEffect(() => {
+  //   const fetchGiftCards = async () => {
+  //     try {
+  //       const response = await api.get("/gift-cards"); // No need to manually add headers, An Interceptor inside api.ts
+  //       setGiftCards(response.data.data);
+  //     } catch (err) {
+  //       setError("Failed to load gift cards.");
+  //       console.error(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-        const apiUrl = import.meta.env.VITE_API_URL;
+  //   fetchGiftCards();
+  // }, []);
 
-        // const token = localStorage.getItem("authToken"); // Retrieve token from storage
-        if(!token){
-          console.log("NO token found, please login.");
-          return;
-        }
-        const response = await axios.get(`${apiUrl}/gift-cards`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in headers
-          },
-        });
-        setGiftCards(response.data.data); // The API returns data inside `data`
-      } catch (err) {
-        setError("Failed to load gift cards."); 
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGiftCards();
-  }, []);
-
-  if (loading) return <p className="animate-pulse">Loading...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
-
+  // if (loading) return <p className="animate-pulse flex items-center gap-2"><FiLoader className="animate-spin"/>Loading...</p>;
+  // if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 gap-y-14">
-      {giftCards.map((item, index) => (
+
+      {/* {giftCards.map((item, index) => (
         <div key={item._id}>
           <GiftCard item={item} />
           {index === 5 && <Banner />}
         </div>
+      ))} */}
+
+      {AllGiftCardItems.map((item, index) => (
+        <>
+        <GiftCard key={item.id} item={item}/>
+        {index === 5 && <Banner />}
+        </>
       ))}
     </div>
   );

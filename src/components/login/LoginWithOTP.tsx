@@ -49,7 +49,7 @@ const LoginWithOTP = () => {
 
       const data = response.data;
       setStatus('success');
-      login(data.token); // Update authentication state
+      login(data.token, data.refreshToken); // Update authentication state
       setTimeout(() => {
         window.location.href = '/home';
       }, 1000);
