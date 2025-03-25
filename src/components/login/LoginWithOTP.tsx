@@ -26,7 +26,7 @@ const LoginWithOTP = () => {
 
       setStatus('success');
       setTimeout(() => setStep(2), 1000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
       setStatus('error');
       setErrorMessage(error.response?.data?.error || 'Failed to send OTP. Try again.');
@@ -121,6 +121,7 @@ const LoginWithOTP = () => {
                         type="checkbox"
                         name="remember"
                         checked={rememberMe}
+                        title="Keep me logged in"
                         onChange={(e) => setRememberMe(e.target.checked)}
                         className="mr-2"
                     />

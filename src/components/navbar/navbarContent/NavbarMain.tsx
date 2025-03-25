@@ -5,9 +5,11 @@ import FavIcon from "../../../../public/favicon.png";
 import CloseIcon from "../../../../public/icons/close.png";
 import Search from "./search/Search";
 import NavMenus from "./navMenus/NavMenus";
+import { useAuth } from "../../../context/useAuth";
 
-const NavbarMain = ({isAuthenticated}) => {
+const NavbarMain = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const isAuthenticated = useAuth();
 
   return (
     <>

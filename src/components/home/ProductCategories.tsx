@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, JSX } from "react";
+import { useEffect, useState, JSX } from "react";
 import AllGiftCard from "./allGiftCard/AllGiftCard";
 import AppStore from "./appStore/AppStore";
 import Shopping from "./shopping/Shopping";
