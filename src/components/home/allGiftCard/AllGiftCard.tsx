@@ -3,7 +3,8 @@ import GiftCard from "./GiftCard";
 import { FiLoader } from "react-icons/fi";
 import Banner from "../Banner";
 import { GiftCardItem } from "../../../context/Type";
-import api from "../../../context/api"; // Import Axios 
+import axios from "axios";
+// import api from "../../../context/api"; // Import Axios 
 
 const AllGiftCard = () => {
   const [giftCards, setGiftCards] = useState<GiftCardItem[]>([]);
@@ -13,7 +14,7 @@ const AllGiftCard = () => {
   useEffect(() => {
     const fetchGiftCards = async () => {
       try {
-        const response = await api.get("/gift-cards"); // No need to manually add headers, An Interceptor inside api.ts
+        const response = await axios.get("/api/gift-cards");
         setGiftCards(response.data.data);
       } catch (err) {
         setError("Failed to load gift cards.");

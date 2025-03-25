@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "../../../../../context/useAuth";
 import { ActiveAddToCart } from "../../../../../assets/Data";
 import CartCard from "./CartCard";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
   const [cartOpen, setCartOpen] = useState(false);
@@ -43,11 +44,13 @@ const Cart = () => {
               <div>
                 <div className="flex items-center my-4 py-[18px] px-[16px]">
                   <span className="text-greynormal">Total Cart</span>
-                  <span className="text-greynormal ml-auto">$75</span>
+                  <span className="text-greynormal ml-auto">$75{}</span>
                 </div>
-                <button className="mt-2 w-full bg-greynormal text-white py-[10px] px-[16px] rounded-[8px]">
-                  View Cart
-                </button>
+                <Link to="/carts">
+                  <button className="mt-2 w-full bg-greynormal text-white py-[10px] px-[16px] rounded-[8px]">
+                    View Cart
+                  </button>
+                </Link>
               </div>
             </motion.div>
           </div>

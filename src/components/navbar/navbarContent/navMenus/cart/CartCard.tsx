@@ -5,9 +5,10 @@ const CartCard = ({item}) => {
   return (
     <div>
       <ul>
-        <li className="flex justify-between py-[18px] px-[10px] rounded-[8px] border border-transparent hover:border hover:border-red-600 duration-700 border-b border-greylight">
+        <li className="flex justify-between py-[10px] px-[10px] rounded-[8px] border border-transparent hover:border hover:border-red-600 duration-700 border-b border-greylight">
           <div className="flex items-center justify-between w-full">
             <div className="flex gap-1">
+
               {/* Product image */}
               <div className="w-20 h-10">
                 <img src={item.image} alt="" className="" />
