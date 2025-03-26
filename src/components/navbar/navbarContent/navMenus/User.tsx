@@ -4,7 +4,7 @@ import UserIcon from "../../../../../public/icons/user-line.png";
 import { useAuth } from "../../../../context/useAuth";
 const User = () => {
   const [userOpen, setUserOpen] = useState(false);
-  const isAuthenticated = useAuth();
+  const {isAuthenticated, logout} = useAuth();
   return (
     <>
 
@@ -31,6 +31,9 @@ const User = () => {
                 </a>
                 <a href="/orders" className="px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
                   Orders
+                </a>
+                <a href="/" onClick={logout} className="px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
+                  Logout
                 </a>
               </div>
             </motion.div>

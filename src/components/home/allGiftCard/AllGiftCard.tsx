@@ -15,7 +15,16 @@ const AllGiftCard = () => {
     const fetchGiftCards = async () => {
       try {
         const response = await axios.get("https://gift-card-ecommerce-api.onrender.com/api/gift-cards");
-        setGiftCards(response.data.data);
+
+        console.log("Response Data:", response.data); // Check if data is returned
+        
+        if (response.data && response.data.length > 0) {
+          setGiftCards(response.data); // Assuming you are using useState
+        } else {
+          setError("No gift cards available.");
+          setGiftCards([]); // Set an empty array to prevent errors
+        }
+
       } catch (err) {
         setError("Failed to load gift cards.");
         console.error(err);
@@ -32,7 +41,6 @@ const AllGiftCard = () => {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 gap-y-14">
-
       {giftCards.map((item, index) => (
         <div key={item._id}>
           <GiftCard item={item} />
