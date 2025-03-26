@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useAuth } from "../../context/useAuth"; // Adjust the import path as necessary
 import axios from "axios";
 import { countries } from "./CountryCodes";
 
 const RegisterAcc = () => {
+  const { setUserId } = useAuth();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -54,7 +56,9 @@ const RegisterAcc = () => {
           phone: `${formData.countryCode}${formData.phone}`, // Send phone with country code
           password: formData.password,
         }
-      );
+        );
+      const data = response.data;
+      setUserId(data.userId);
 
       if (response.data.success) {
         setSuccess("Account created successfully! Please verify your email.");

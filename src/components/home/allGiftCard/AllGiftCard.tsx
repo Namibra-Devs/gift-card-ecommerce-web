@@ -14,7 +14,7 @@ const AllGiftCard = () => {
   useEffect(() => {
     const fetchGiftCards = async () => {
       try {
-        const response = await axios.get("/api/gift-cards");
+        const response = await axios.get("https://gift-card-ecommerce-api.onrender.com/api/gift-cards");
         setGiftCards(response.data.data);
       } catch (err) {
         setError("Failed to load gift cards.");
