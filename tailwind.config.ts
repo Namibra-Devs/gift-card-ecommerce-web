@@ -24,6 +24,7 @@ const config: Config = {
         bluelightactive: "#CED7F8",
         rednormal: "#D94545",
         redlightactive: "#FFB0B1",
+        warningactive: "#FFF9E6",
         boltbg: "#EEEEEE",
         walmartbg: "#1A75CF",
         doordashbg: "#CD4C59",

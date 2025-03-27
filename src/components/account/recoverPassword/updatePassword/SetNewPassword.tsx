@@ -3,8 +3,8 @@ import { useState } from "react";
 
 import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
-const ForgotPassword = () => {
-  const [step, setStep] = useState(1); // 1: Email input, 2: Overview 3:
+const SetNewPassword = () => {
+  const [step, setStep] = useState(1); // 1: Input new password, 2: Success
 
   return (
     <div className="flex items-center justify-center h-screen bg-white py-10 p-4 md:px-20">
@@ -20,11 +20,11 @@ const ForgotPassword = () => {
           {/* Left Side (Form) */}
           {step === 1 ? (
             <>
-              <StepOne setStep = {setStep} />
+              <StepOne setStep={setStep} />
             </>
           ) : (
             <>
-              <StepTwo />
+              <StepTwo/>
             </>
           )}
         </div>
@@ -42,4 +42,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default SetNewPassword;
