@@ -2,9 +2,10 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import UserIcon from "../../../../../public/icons/user-line.png";
 import { useAuth } from "../../../../context/useAuth";
+import {Link} from "react-router-dom";
 const User = () => {
   const [userOpen, setUserOpen] = useState(false);
-  const isAuthenticated = useAuth();
+  const {isAuthenticated, logout} = useAuth();
   return (
     <>
 
@@ -17,7 +18,7 @@ const User = () => {
             {isAuthenticated ? (
               <span className="text-greynormal">Tyler</span>
             ) : (
-              <a href="/login" className="text-greynormal">Login</a>)}
+              <Link to="/login" className="text-greynormal">Login</Link>)}
           </div>
           {isAuthenticated && userOpen && (
             <motion.div
@@ -25,13 +26,16 @@ const User = () => {
               animate={{ opacity: 1, y: 0 }}
               className="absolute bg-white p-1.5 shadow-md border border-gray-100 rounded-[8px] left-0 right-0 top-10  w-[164px] "
             >
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col items-start gap-2">
                 <a href="/account" className="px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
                   Account
                 </a>
                 <a href="/orders" className="px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
                   Orders
                 </a>
+                <button onClick={logout} className="px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
+                  Logout
+                </button>
               </div>
             </motion.div>
           )}

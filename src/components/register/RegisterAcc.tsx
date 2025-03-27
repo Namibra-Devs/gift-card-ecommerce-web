@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { countries } from "./CountryCodes";
-import api from "../../context/api";
+
 const RegisterAcc = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -54,7 +54,9 @@ const RegisterAcc = () => {
           phone: `${formData.countryCode}${formData.phone}`, // Send phone with country code
           password: formData.password,
         }
-      );
+        );
+      const data = response.data;
+      localStorage.setItem("userId", data.userId);
 
       if (response.data.success) {
         setSuccess("Account created successfully! Please verify your email.");
@@ -114,7 +116,7 @@ const RegisterAcc = () => {
               <input
                 type="text"
                 name="firstName"
-                placeholder=""
+                placeholder="Enter your first name"
                 value={formData.firstName}
                 onChange={handleChange}
                 required
@@ -128,7 +130,8 @@ const RegisterAcc = () => {
               <input
                 type="text"
                 name="lastName"
-                placeholder=""
+                title="Enter your last name"
+                placeholder="Enter your last name"
                 value={formData.lastName}
                 onChange={handleChange}
                 required
@@ -159,7 +162,8 @@ const RegisterAcc = () => {
             <input
               type="text"
               name="referralCode"
-              placeholder=""
+              title="Enter your referral code"
+              placeholder="Enter your referral code"
               value={formData.referralCode}
               onChange={handleChange}
               className="w-full bg-greylight px-[24px] py-[13px] rounded-[8px]"
@@ -171,7 +175,9 @@ const RegisterAcc = () => {
               Phone Number
             </label>
             <div className="flex space-x-2 relative">
+              <label htmlFor="countryCode" className="sr-only">Country Code</label>
               <select
+                id="countryCode"
                 name="countryCode"
                 value={formData.countryCode}
                 onChange={handleCountryChange}
@@ -213,8 +219,8 @@ const RegisterAcc = () => {
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="comfirmPassword" className="text-greynegative mb-3">
-              Comfirm Password
+            <label htmlFor="confirmPassword" className="text-greynegative mb-3">
+              Confirm Password
             </label>
             <input
               type="password"
@@ -231,6 +237,7 @@ const RegisterAcc = () => {
           <div className="flex items-center space-x-2">
             <input
               type="checkbox"
+              title="Agree to terms"
               checked={checked}
               onChange={() => setChecked(!checked)}
               className="w-4 h-4"

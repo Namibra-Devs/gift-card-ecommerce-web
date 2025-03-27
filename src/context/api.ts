@@ -14,7 +14,6 @@ const useSetRefreshAccessToken = () => {
     refreshAccessToken = context.refreshAccessToken;
   }
 };
-
 export const SetRefreshAccessTokenComponent: React.FC = () => {
   useSetRefreshAccessToken();
   return null;
