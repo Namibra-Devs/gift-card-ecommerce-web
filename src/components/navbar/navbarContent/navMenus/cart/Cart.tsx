@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 const Cart = () => {
   const [cartOpen, setCartOpen] = useState(false);
-  const isAuthenticated = useAuth();
+  const {isAuthenticated} = useAuth();
   return (
     <>
       <div className="relative">

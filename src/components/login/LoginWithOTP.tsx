@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import React, { useState } from "react";
 import { BiLoader } from "react-icons/bi";
 import { FaCircleCheck, FaExclamation } from "react-icons/fa6";
@@ -9,12 +9,9 @@ const LoginWithOTP = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1); // 1: Email input, 2: OTP input
-  const [status, setStatus] = useState<
-    "idle" | "processing" | "success" | "error"
-  >("idle");
+  const [status, setStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const { setUserId, userId } = useAuth(); // Destructure all from useAuth
-  const {login}= useAuth();
+  const { sendOtp, verifyOtp } = useAuth();
 
   // Handle Email Submission
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -22,34 +19,13 @@ const LoginWithOTP = () => {
     setStatus("processing");
     setErrorMessage("");
 
-    try {
-      const response = await axios.post(
-        "https://gift-card-ecommerce-api.onrender.com/api/auth/login",
-        {
-          email,
-        }
-      );
-
-      const { userId } = response.data;
-      setUserId(userId); // Store userId
-      console.log(userId); // Log userId
-      localStorage.setItem("userId", userId); // Store userId in localStorage
-
-      setStatus("success");
-      setUserId(response.data.userId); // Store userId in context
+  
+      if (!email) return alert("Enter your email!");
+      await sendOtp(email);
+      alert("OTP Sent! Check your email.");
       setTimeout(() => setStep(2), 1000);
-    } catch (error: unknown) {
-      console.error(error);
-      setStatus("error");
-      if (axios.isAxiosError(error) && error.response) {
-        setErrorMessage(
-          error.response.data?.error || "Failed to send OTP. Try again."
-        );
-      } else {
-        setErrorMessage("Failed to send OTP. Try again.");
-      }
-      setTimeout(() => setStatus("idle"), 3000);
-    }
+
+      setStatus("idle");
   };
 
   // Handle OTP Verification
@@ -58,56 +34,15 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
   setStatus("processing");
   setErrorMessage("");
 
-  // Retrieve userId from localStorage (ensure it's stored during login)
-  const storedUserId = localStorage.getItem("userId") || userId;
+  if (!otp) return alert("Enter OTP!");
 
-  if (!storedUserId) {
-    setErrorMessage("User ID not found. Please log in again.");
-    setStatus("error");
-    return;
+  const success = await verifyOtp(otp);
+  if (success) {
+    alert("OTP Verified! Logged in successfully.");
+  } else {
+    alert("Invalid OTP. Try again.");
   }
-
-  try {
-    const response = await axios.post(
-      "https://gift-card-ecommerce-api.onrender.com/api/auth/verify",
-      {
-        verificationCode: otp,  // User-entered OTP
-        userId: storedUserId,  // Use stored userId
-      }
-    );
-
-    const data = response.data;
-
-    if (data.success && data.token) {
-      // Store authentication tokens
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("refreshToken", data.refreshToken || ""); 
-
-      console.log("OTP Verified! Token:", data.token);
-
-      setStatus("success");
-      login(data.token, data.refreshToken); // Update authentication state
-      
-      // Redirect after successful verification
-      setTimeout(() => {
-        window.location.href = "/"; // Change this if needed
-      }, 1000);
-    } else {
-      throw new Error("No token received from server.");
-    }
-  } catch (error: unknown) {
-    console.error("OTP Verification Error:", error);
-
-    setStatus("error");
-
-    if (axios.isAxiosError(error) && error.response) {
-      setErrorMessage(error.response.data?.error || "Invalid OTP. Try again.");
-    } else {
-      setErrorMessage("Something went wrong. Try again.");
-    }
-
-    setTimeout(() => setStatus("idle"), 3000);
-  }
+  setStatus("idle");
 };
 
 
