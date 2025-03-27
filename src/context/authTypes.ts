@@ -9,15 +9,14 @@ export interface IUser {
   }
   
   // Login Object (Email submission for OTP)
-  export interface ILogin {
+  export interface ISentOtp {
     email: string;
   }
   
   // OTP Verification Object
-  export interface IOtpVerification {
-    email: string;
-    otp: string;
-    rememberMe?: boolean;
+  export interface IVerifyOtp {
+    userId: string;
+    verificationCode: string;
   }
   
   // Token Object (Response after login)

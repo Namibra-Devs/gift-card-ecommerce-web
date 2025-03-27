@@ -1,70 +1,117 @@
-import { createContext, useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-// Define AuthContext Type
 interface AuthContextType {
+  userId: string | null;
+  token: string | null;
   isAuthenticated: boolean;
-  login: (token: string, refreshToken: string) => void;
+  sendOtp: (email: string) => Promise<void>;
+  verifyOtp: (otp: string) => Promise<boolean>;
   logout: () => void;
-  refreshAccessToken: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [userId, setUserId] = useState<string | null>(
+    () => localStorage.getItem("userId") || null
+  );
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token")
+  );
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!token);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [accessToken, setAccessToken] = useState<string | null>(localStorage.getItem("token"));
-
-  // On Page Reload - Check if token exists
+  // Load auth state on app startup ======
   useEffect(() => {
-    if (accessToken) {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setIsAuthenticated(true);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+      setIsAuthenticated(false);
     }
-  }, [accessToken]);
+  }, [token]);
 
-  // Login - Store tokens securely
-  const login = (token: string, refreshToken: string) => {
-    localStorage.setItem("token", token); // Access token (temporary)
-    localStorage.setItem("refreshToken", refreshToken); // Store refresh token
+  // Save userId and token to localStorage when they change =======
+  useEffect(() => {
+    if (userId) localStorage.setItem("userId", userId);
+    else localStorage.removeItem("userId");
 
-    setAccessToken(token);
-    setIsAuthenticated(true);
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  };
+    if (token) localStorage.setItem("token", token);
+    else localStorage.removeItem("token");
+  }, [userId, token]);
 
-  // Logout - Remove tokens
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-
-    setAccessToken(null);
-    setIsAuthenticated(false);
-    delete axios.defaults.headers.common["Authorization"];
-  };
-
-  // Refresh Token Function
-  const refreshAccessToken = async () => {
+  // 1. Send OTP (Login/Register) =======
+  const sendOtp = async (email: string) => {
     try {
-      const refreshToken = localStorage.getItem("refreshToken");
-      if (!refreshToken) return logout(); // If no refresh token, logout
+      const response = await axios.post(
+        "https://gift-card-ecommerce-api.onrender.com/api/auth/login",
+        { email }
+      );
 
-      const response = await axios.post("https://gift-card-ecommerce-api.onrender.com/api/auth/refresh", {
-        refreshToken,
-      });
+      if (response.data.success) {
+        const fetchedUserId = response.data.userId;
+        // Store in localStorage and update state
+        localStorage.setItem("userId", fetchedUserId);
+        setUserId(fetchedUserId); 
 
-      const newAccessToken = response.data.accessToken;
-      setAccessToken(newAccessToken);
-      localStorage.setItem("token", newAccessToken);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
+        console.log("Sent. User ID:", response.data.userId);
+      } else {
+        throw new Error(response.data.message || "Failed to send OTP.");
+      }
     } catch (error) {
-      console.error("Failed to refresh token:", error);
-      logout();
+      console.error("Send OTP Error:", error);
     }
+  };
+
+  // 2. Verify OTP and Authenticate =======
+  const verifyOtp = async (otp: string): Promise<boolean> => {
+    try {
+      // Retrieve userId from localStorage if state is empty
+      const storedUserId = userId || localStorage.getItem("userId"); 
+
+      if (!storedUserId) {
+        console.error("No User ID found! Please request OTP first.");
+        return false;
+      }
+ 
+      const response = await axios.post(
+        "https://gift-card-ecommerce-api.onrender.com/api/auth/verify",
+        { verificationCode: otp,
+          userId: storedUserId, // Use stored userId
+        }
+      );
+
+      if (response.data.success && response.data.token) {
+        const newToken = response.data.token;
+        setToken(newToken);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+        console.log("OTP Verified! Token:", newToken);
+        window.location.href = "/";
+        return true;
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      console.error("OTP Verification Error:", error);
+      return false;
+    }
+  };
+
+  // 3. Logout Function =======
+  const logout = () => {
+    setUserId(null);
+    setToken(null);
+    localStorage.removeItem("userId");
+    localStorage.removeItem("token");
+    delete axios.defaults.headers.common["Authorization"];
+    setIsAuthenticated(false);
+    console.log("👋 User logged out");
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, refreshAccessToken }}>
+    <AuthContext.Provider
+      value={{ userId, token, isAuthenticated, sendOtp, verifyOtp, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

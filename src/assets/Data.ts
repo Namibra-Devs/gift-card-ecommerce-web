@@ -99,3 +99,29 @@ export const AllGiftCardItems = [
     image: "/images/hotels.png",
   },
 ];
+
+
+//Cart Data for development purpose
+export const ActiveAddToCart = [
+  {
+    id: 1,
+    name: "Nintendo Gift Card",
+    price: 25,
+    quantity: 1,
+    image: "/ninetendo-sm.png",
+  },
+  {
+    id: 2,
+    name: "Nintendo Gift Card",
+    price: 25,
+    quantity: 2,
+    image: "/ninetendo-sm.png",
+  },
+  {
+    id: 3,
+    name: "Nintendo Gift Card",
+    price: 25,
+    quantity: 1,
+    image: "/ninetendo-sm.png",
+  },
+]
