@@ -1,7 +1,10 @@
+import ForgotPassword from "../components/account/recoverPassword/ForgotPassword"
 
 const RecoverPassword = () => {
   return (
-    <div>RecoverPassword</div>
+    <>
+      <ForgotPassword/>
+    </>
   )
 }
 
