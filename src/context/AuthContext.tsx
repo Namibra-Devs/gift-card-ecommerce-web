@@ -8,6 +8,7 @@ interface AuthContextType {
   sendOtp: (email: string) => Promise<void>;
   verifyOtp: (otp: string) => Promise<boolean>;
   logout: () => void;
+  refreshAccessToken: () => Promise<void>;
 }
 
 export const AuthContext = React.createContext<AuthContextType | undefined>(
@@ -115,9 +116,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     console.log("👋 User logged out");
   };
 
+  // 4. Refresh Access Token =======
+  const refreshAccessToken = async () => {
+    try {
+      const response = await axios.post(
+        "https://gift-card-ecommerce-api.onrender.com/api/auth/refresh",
+        { token }
+      );
+
+      if (response.data.success && response.data.token) {
+        const newToken = response.data.token;
+        setToken(newToken);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+        console.log("Access token refreshed:", newToken);
+      } else {
+        throw new Error(response.data.message || "Failed to refresh token.");
+      }
+    } catch (error) {
+      console.error("Refresh Token Error:", error);
+      logout(); // Log out if refresh fails
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ userId, token, isAuthenticated, sendOtp, verifyOtp, logout }}
+      value={{
+        userId,
+        token,
+        isAuthenticated,
+        sendOtp,
+        verifyOtp,
+        logout,
+        refreshAccessToken,
+      }}
     >
       {children}
     </AuthContext.Provider>
