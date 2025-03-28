@@ -19,7 +19,6 @@ const LoginWithOTP = () => {
     setStatus("processing");
     setErrorMessage("");
 
-  
       if (!email) return alert("Enter your email!");
       await sendOtp(email);
       alert("OTP Sent! Check your email.");
@@ -126,7 +125,7 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
                   </label>
                 </div>
                 <a
-                  href="/recover_password"
+                  href="/recover-password"
                   className="underline text-linkcolor"
                 >
                   Forgot password?

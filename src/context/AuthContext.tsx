@@ -10,7 +10,9 @@ interface AuthContextType {
   logout: () => void;
 }
 
-export const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = React.createContext<AuthContextType | undefined>(
+  undefined
+);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userId, setUserId] = useState<string | null>(
     () => localStorage.getItem("userId") || null
@@ -49,12 +51,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
       if (response.data.success) {
-        const fetchedUserId = response.data.userId;
-        // Store in localStorage and update state
-        localStorage.setItem("userId", fetchedUserId);
-        setUserId(fetchedUserId); 
+        const fetchedUserId = response.data.data.userId; //Ok
+        // Store in URL as a query parameter
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("userId", fetchedUserId);
+        window.history.replaceState({}, "", currentUrl.toString());
 
-        console.log("Sent. User ID:", response.data.userId);
+        // Update state//
+        setUserId(fetchedUserId);
+
+        console.log("Sent. User ID:", response.data.data.userId);
       } else {
         throw new Error(response.data.message || "Failed to send OTP.");
       }
@@ -67,16 +73,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const verifyOtp = async (otp: string): Promise<boolean> => {
     try {
       // Retrieve userId from localStorage if state is empty
-      const storedUserId = userId || localStorage.getItem("userId"); 
+      const storedUserId = userId || localStorage.getItem("userId");
 
       if (!storedUserId) {
         console.error("No User ID found! Please request OTP first.");
         return false;
       }
- 
+
       const response = await axios.post(
         "https://gift-card-ecommerce-api.onrender.com/api/auth/verify",
-        { verificationCode: otp,
+        {
+          verificationCode: otp,
           userId: storedUserId, // Use stored userId
         }
       );
