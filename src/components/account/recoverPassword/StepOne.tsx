@@ -26,15 +26,18 @@ const StepOne: React.FC<StepOneProps> = ({ setStep }) => {
   }, [email, userId]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    
     e.preventDefault();
     setLoading(true);
+    
     setMessage("");
     setStep(2);
+
     try {
       // Simulate API request (Replace with actual API endpoint)
       const response = await axios.post("https://gift-card-ecommerce-api.onrender.com/api/auth/forgot-password", { email });
 
-      setUserId(response.data.userId);
+      setUserId(response.data.data.userId);
       setMessage("A password reset link has been sent to your email.");
       
     } catch (error) {

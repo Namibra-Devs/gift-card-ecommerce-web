@@ -1,22 +1,35 @@
 import { useState, useEffect } from "react";
-
+import axios from "axios";
 const StepTwo = () => {
   const [resent, setResent] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("example@example.com");
 
   useEffect(() => {
     // Retrieve email from local storage
-    const storedEmail = localStorage.getItem("email");
-    if (storedEmail) setEmail(storedEmail);
-  }, []);
+    const storedEmail = JSON.parse(localStorage.getItem('userData') || "");
+    console.log(storedEmail);
+    if (storedEmail) setEmail(storedEmail.email); //
+  }, []); //Should duplicate the useEffects for the userId retrival?
 
-  const handleResend = () => {
+
+  const handleResend = async () => {
     setResent(true);
-    // Simulate API call to resend email verification
-    setTimeout(() => {
+    
+    try {
+      // Simulate API request (Replace with actual API endpoint)
+      const response = await axios.post("https://gift-card-ecommerce-api.onrender.com/api/auth/forgot-password", { email });
+
+      if (response.data.success) {
+        setTimeout(() => {
+          setResent(false);
+          alert("Verification code resent!");
+        }, 2000);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Error sending verification code. Try again.");
       setResent(false);
-      alert("Verification email resent!");
-    }, 2000);
+    }
   };
 
   return (

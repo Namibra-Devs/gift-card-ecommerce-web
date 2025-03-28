@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import {Link} from "react-router-dom";
 import { countries } from "./CountryCodes";
 
 const RegisterAcc = () => {
@@ -86,9 +87,9 @@ const RegisterAcc = () => {
     <div className="flex justify-center items-center min-h-screen px-4 py-20 bg-greylight">
       <div className="bg-white p-[40px] rounded-[24px] w-full max-w-lg">
         {/* Logo */}
-        <a href="/" className="flex items-center justify-center mb-6">
+        <Link to="/" className="flex items-center justify-center mb-6">
           <img src="/favicon.png" alt="PrepaidBanc" />
-        </a>
+        </Link>
 
         <div className="flex flex-wrap justify-between items-center">
           {/* Sign-in Link */}
@@ -169,6 +170,7 @@ const RegisterAcc = () => {
               className="w-full bg-greylight px-[24px] py-[13px] rounded-[8px]"
             />
           </div>
+
           {/* Phone Number Field */}
           <div className="flex flex-col">
             <label htmlFor="phoneNumber" className="text-greynegative mb-3">
