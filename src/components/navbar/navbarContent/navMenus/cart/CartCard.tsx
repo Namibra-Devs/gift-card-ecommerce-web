@@ -1,7 +1,14 @@
 // React ICons
 import { GoPlusCircle } from "react-icons/go";
 import { RxMinusCircled } from "react-icons/rx";
-const CartCard = ({item}) => {
+interface CartItem {
+  image: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+const CartCard = ({ item }: { item: CartItem }) => {
   return (
     <div>
       <ul>
