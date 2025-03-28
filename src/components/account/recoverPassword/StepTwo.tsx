@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import axios from "axios";
 const StepTwo = () => {
   const [resent, setResent] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("example@example.com");
@@ -10,13 +10,23 @@ const StepTwo = () => {
     if (storedEmail) setEmail(storedEmail);
   }, []);
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setResent(true);
-    // Simulate API call to resend email verification
-    setTimeout(() => {
+    try {
+      // Simulate API request (Replace with actual API endpoint)
+      const response = await axios.post("https://gift-card-ecommerce-api.onrender.com/api/auth/forgot-password", { email });
+
+      if (response.data.success) {
+        setTimeout(() => {
+          setResent(false);
+          alert("Verification code resent!");
+        }, 2000);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Error sending verification code. Try again.");
       setResent(false);
-      alert("Verification email resent!");
-    }, 2000);
+    }
   };
 
   return (
