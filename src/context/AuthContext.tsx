@@ -51,16 +51,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
       if (response.data.success) {
-        const fetchedUserId = response.data.userId;
+        const fetchedUserId = response.data.data.userId; //Ok
         // Store in URL as a query parameter
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set("userId", fetchedUserId);
         window.history.replaceState({}, "", currentUrl.toString());
 
-        // Update state
+        // Update state//
         setUserId(fetchedUserId);
 
-        console.log("Sent. User ID:", response.data.userId);
+        console.log("Sent. User ID:", response.data.data.userId);
       } else {
         throw new Error(response.data.message || "Failed to send OTP.");
       }

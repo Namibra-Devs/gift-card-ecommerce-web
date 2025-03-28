@@ -37,7 +37,7 @@ const StepOne: React.FC<StepOneProps> = ({ setStep }) => {
       // Simulate API request (Replace with actual API endpoint)
       const response = await axios.post("https://gift-card-ecommerce-api.onrender.com/api/auth/forgot-password", { email });
 
-      setUserId(response.data.userId);
+      setUserId(response.data.data.userId);
       setMessage("A password reset link has been sent to your email.");
       
     } catch (error) {

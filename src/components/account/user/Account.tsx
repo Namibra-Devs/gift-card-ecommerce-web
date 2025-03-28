@@ -38,7 +38,7 @@ const Account = () => {
             <span className="text-grey">{userData[field]}</span>
               <button
                 onClick={() => handleEdit(field)}
-                className="bg-greynormal text-white hover:bg-grey duration-700 rounded-[8px] py-[13px] px-[24px]"
+                className="bg-greynormal text-white hover:bg-grey duration-700 rounded-[9px] py-[13px] px-[24px]"
               >
                 Edit
               </button>
@@ -53,13 +53,13 @@ const Account = () => {
           <div className="flex flex-col justify-between bg-white rounded-[8px] shadow-lg w-[558px] h-[300px] overflow-hidden">
             <div className="flex items-center justify-between bg-greylight p-4">
               <h3 className="text-[15px] font-medium">Edit {editField}</h3>
-              <button onClick={() => setModalOpen(false)} className="h-7 w-7 flex items-center justify-center rounded-full bg-white text-grey"><img src="/icons/close.png" alt="Close Icon" /></button>
+              <button type="button" onClick={() => setModalOpen(false)} className="h-7 w-7 flex items-center justify-center rounded-full bg-white text-grey"><img src="/icons/close.png" alt="Close Icon" /></button>
             </div>
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              className="w-full border px-3 py-2 rounded-md mb-4"
+              className="bg-greylight max-w-full px-[24px] py-[21px] rounded-[8px] m-4"
               placeholder={`Enter ${editField}`}
             />
             <div className="bg-greylight p-4 flex justify-end space-x-4">
