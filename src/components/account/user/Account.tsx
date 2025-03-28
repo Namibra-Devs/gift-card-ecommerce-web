@@ -1,13 +1,14 @@
-
 import { useState } from "react";
+import { UseAuthProfile } from "../../../context/profile/UseAuthProfile";
 
 const Account = () => {
+  const {user, loading} = UseAuthProfile();
+  
   const [userData, setUserData] = useState({
-    phone: "02444444444",
-    username: "Paul",
-    firstName: "Paul",
-    lastName: "Paul",
-    email: "example@example.com",
+    phone: user?.phone || "",
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
   });
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -27,27 +28,37 @@ const Account = () => {
     setModalOpen(false);
   };
 
+  if (loading) return <p>Loading...</p>
+  if (!user) return <p>No user data available.</p>
+
   return (
     <div>
       <h2 className="mb-4">Profile</h2>
-      <div className="bg-greylight min-w-fit px-6 py-3 rounded-[16px]">
+      <div className="bg-white md:bg-greylight min-w-fit px-6 py-3 rounded-[16px]">
+      
         {(Object.keys(userData) as Array<keyof typeof userData>).map((field) => (
           <div key={field} className="flex items-center justify-between py-3">
-            <span className="capitalize font-medium">{field.replace(/([A-Z])/g, " $1")}</span>
+            <span className="capitalize font-medium text-grey md:text-greynormal">{field.replace(/([A-Z])/g, " $1")}</span>
             <div className="flex items-center justify-end gap-6">
             <span className="text-grey">{userData[field]}</span>
-              <button
+                <button
                 onClick={() => handleEdit(field)}
-                className="bg-greynormal text-white hover:bg-grey duration-700 rounded-[9px] py-[13px] px-[24px]"
-              >
+                className="bg-greynormal text-white hover:bg-grey duration-700 rounded-[9px] py-[13px] px-[24px] hidden md:block"
+                >
                 Edit
-              </button>
+                </button>
+                <button
+                onClick={() => handleEdit(field)}
+                className="block md:hidden"
+                >
+                <img src="/icons/edit.png" alt="Edit" />
+                </button>
            </div>
           </div>
         ))}
       </div>
 
-      {/* Modal */}
+      {/* Edit Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-5 p-4">
           <div className="flex flex-col justify-between bg-white rounded-[8px] shadow-lg w-[558px] h-[300px] overflow-hidden">

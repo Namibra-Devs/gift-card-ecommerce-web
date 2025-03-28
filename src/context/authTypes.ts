@@ -1,3 +1,4 @@
+
 // User Object (for Registration & Authentication)
 export interface IUser {
     name: string;
