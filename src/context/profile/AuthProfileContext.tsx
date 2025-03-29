@@ -30,6 +30,7 @@ export const AuthProfileProvider: React.FC<AuthProviderProps> = ({ children }) =
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -38,7 +39,7 @@ export const AuthProfileProvider: React.FC<AuthProviderProps> = ({ children }) =
       }
 
       try {
-        const { data } = await axios.get("https://gift-card-ecommerce-api.onrender.com/api/profile", {
+        const { data } = await axios.get(`${apiUrl}/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

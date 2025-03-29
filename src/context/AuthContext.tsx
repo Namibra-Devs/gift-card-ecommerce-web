@@ -15,15 +15,11 @@ export const AuthContext = React.createContext<AuthContextType | undefined>(
   undefined
 );
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [userId, setUserId] = useState<string | null>(
-    () => localStorage.getItem("userId") || null
-  );
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token")
-  );
+  const [userId, setUserId] = useState<string | null>(() => localStorage.getItem("userId") || null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!token);
-
   // Load auth state on app startup ======
+  
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -45,10 +41,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // 1. Send OTP (Login/Register) =======
   const sendOtp = async (email: string) => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
     try {
-      const response = await axios.post(
-        "https://gift-card-ecommerce-api.onrender.com/api/auth/login",
-        { email }
+      const response = await axios.post(`${apiUrl}/auth/login`,{ email },
+      {
+        headers: {
+        Authorization: `Bearer`,
+        },
+      }
       );
 
       if (response.data.success) {
@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // 2. Verify OTP and Authenticate =======
   const verifyOtp = async (otp: string): Promise<boolean> => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
     try {
       // Retrieve userId from localStorage if state is empty
       const storedUserId = userId || localStorage.getItem("userId");
@@ -82,7 +83,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       const response = await axios.post(
-        "https://gift-card-ecommerce-api.onrender.com/api/auth/verify",
+        `${apiUrl}/auth/verify`,
         {
           verificationCode: otp,
           userId: storedUserId, // Use stored userId
@@ -106,21 +107,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // 3. Logout Function =======
-  const logout = () => {
-    setUserId(null);
+  const logout = async () => {
+    try{
+      setIsAuthenticated(false);
     setToken(null);
     localStorage.removeItem("userId");
     localStorage.removeItem("token");
     delete axios.defaults.headers.common["Authorization"];
     setIsAuthenticated(false);
-    console.log("👋 User logged out");
+
+    setTimeout(() => {
+      alert("Logout Successfully");
+    },3000);
+
+    console.log("User logged out");
+    window.location.href = "/";
+    }catch(error){
+      console.log(error);
+      setTimeout(() => {
+        alert("Error while logging out, try again");
+      },3000);
+    }
   };
 
   // 4. Refresh Access Token =======
   const refreshAccessToken = async () => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
     try {
       const response = await axios.post(
-        "https://gift-card-ecommerce-api.onrender.com/api/auth/refresh",
+        `${apiUrl}/auth/refresh`,
         { token }
       );
 
