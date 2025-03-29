@@ -3,29 +3,32 @@ import { useState } from "react";
 import UserIcon from "../../../../../public/icons/user-line.png";
 import { useAuth } from "../../../../context/useAuth";
 import { UseAuthProfile } from "../../../../context/profile/UseAuthProfile";
-import {useNavigate} from "react-router-dom";
 const User = () => {
   const [userOpen, setUserOpen] = useState(false);
   const {isAuthenticated, logout} = useAuth();
   const {user} = UseAuthProfile();
-  const navigate = useNavigate();
 
   return (
     <>
 
         <div className="relative">
-          <div
-            onClick={() => setUserOpen(!userOpen)}
+            <a href={`${isAuthenticated ? "#" : "/login"}`}
+            onClick={() => {
+              if (isAuthenticated) {
+              setUserOpen(!userOpen);
+              }else{
+                setUserOpen(false);
+              };
+            }}
             className={`flex items-center gap-1 cursor-pointer rounded-[4px] p-[6px] ${userOpen ? "bg-greylight rounded-[4px]" : "hover:bg-greylight duration-700"} `}
-          >
+            >
             <img src={UserIcon} alt="User" />
             {isAuthenticated ? (
               <span className="text-greynormal">{user?.firstName}</span>
             ) : (
-              <button type="button" onClick={() => navigate("/login")}>Login</button>
+              <a href="/login" type="button">Login</a>
             )}
-              
-          </div>
+            </a>
           {isAuthenticated && userOpen && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
