@@ -13,8 +13,9 @@ const AllGiftCard = () => {
 
   useEffect(() => {
     const fetchGiftCards = async () => {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
       try {
-        const response = await axios.get("https://gift-card-ecommerce-api.onrender.com/api/gift-cards");
+        const response = await axios.get(`${apiUrl}/gift-cards`);
 
         console.log("Response Data:", response.data); // Check if data is returned
         
