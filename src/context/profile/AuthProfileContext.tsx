@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
+import api from "../api";
 
 interface UserProfile {
   userId: string;
@@ -39,7 +40,7 @@ export const AuthProfileProvider: React.FC<AuthProviderProps> = ({ children }) =
       }
 
       try {
-        const { data } = await axios.get(`${apiUrl}/profile`, {
+        const { data } = await api.get(`${apiUrl}/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

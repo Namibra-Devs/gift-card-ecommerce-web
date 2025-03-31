@@ -1,17 +1,26 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BiLoader } from "react-icons/bi";
-import { FaCircleCheck, FaExclamation } from "react-icons/fa6";
+// import { FaExclamation } from "react-icons/fa6";
 import { useAuth } from "../../context/useAuth";
 
 const LoginWithOTP = () => {
   const [email, setEmail] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [otp, setOtp] = useState("");
-  const [step, setStep] = useState(1); // 1: Email input, 2: OTP input
   const [status, setStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const { sendOtp, verifyOtp } = useAuth();
+  const { sendOtp, verifyOtp, message, setMessage, step } = useAuth();
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage(""); // Clear message after 5 seconds
+      }, 2000);
+
+      return () => clearTimeout(timer); // Cleanup on component unmount
+    }
+  }, [message, setMessage]); // Runs whenever `message` changes
 
   // Handle Email Submission
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -19,12 +28,30 @@ const LoginWithOTP = () => {
     setStatus("processing");
     setErrorMessage("");
 
-      if (!email) return alert("Enter your email!");
-      await sendOtp(email);
-      alert("OTP Sent! Check your email.");
-      setTimeout(() => setStep(2), 1000);
-
+    if (!email) {
+      setErrorMessage("Enter your email");
       setStatus("idle");
+      return;
+    }
+
+    // Improved email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Please enter a valid email address.");
+      setStatus("idle");
+      return;
+    }
+
+    try {
+      await sendOtp(email);
+      setStatus("success");
+    } catch (error) {
+      console.log(error);
+      setErrorMessage("Failed to send OTP. Please try again.");
+      setStatus("error");
+    } finally {
+      setTimeout(() => setStatus("idle"), 2000);
+    }
   };
 
   // Handle OTP Verification
@@ -33,38 +60,29 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
   setStatus("processing");
   setErrorMessage("");
 
-  if (!otp) return alert("Enter OTP!");
-
-  const success = await verifyOtp(otp);
-  if (success) {
-    alert("OTP Verified! Logged in successfully.");
-  } else {
-    alert("Invalid OTP. Try again.");
+  if (!otp){
+    setErrorMessage("Enter OTP!");
+    setTimeout(() => setStatus('idle'), 2000);
   }
-  setStatus("idle");
+  try {
+    await verifyOtp(otp);
+  } catch (error) {
+    console.error(error);
+    setErrorMessage("Failed to verify OTP. Please try again.");
+    setStatus("error");
+  } finally {
+    setTimeout(() => setStatus("idle"), 2000);
+  }
 };
 
 
   return (
     <section className="bg-greylight flex flex-col justify-center items-center h-screen p-4 relative">
       {/* Status Message */}
-      {status !== "idle" && (
-        <span className="bg-gray-100 py-2 px-4 rounded text-sm text-gray-400 absolute top-6">
-          {status === "processing" ? (
-            <span className="flex items-center gap-2">
-              <BiLoader className="animate-spin duration-700" /> Processing...
-            </span>
-          ) : status === "success" ? (
-            <span className="flex items-center gap-2">
-              <FaCircleCheck className="text-green-500 text-xl" /> Success!
-            </span>
-          ) : (
-            <span className="flex items-center gap-2">
-              <FaExclamation className="text-red-500 text-xl" /> {errorMessage}
-            </span>
-          )}
+        <span className="flex py-2 px-4 rounded text-sm text-gray-400 absolute top-7">
+         <p className="text-green-500"> {message}</p>
+         <p className="text-warningactive"> {errorMessage}</p>
         </span>
-      )}
 
       {/* Form */}
       <form
@@ -125,7 +143,7 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
                   </label>
                 </div>
                 <a
-                  href="/recover-password"
+                  href="/recover-password" target="_blank"
                   className="underline text-linkcolor"
                 >
                   Forgot password?
@@ -144,9 +162,6 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
               "Login"
             ) : (
               "Continue"
-            )}
-            {status === "success" && (
-              <FaCircleCheck className="text-green-500 text-xl" />
             )}
           </button>
 
