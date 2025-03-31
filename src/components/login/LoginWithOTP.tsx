@@ -8,10 +8,9 @@ const LoginWithOTP = () => {
   const [email, setEmail] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [otp, setOtp] = useState("");
-  const [step, setStep] = useState(1); // 1: Email input, 2: OTP input
   const [status, setStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const { sendOtp, verifyOtp, message, setMessage } = useAuth();
+  const { sendOtp, verifyOtp, message, setMessage, step } = useAuth();
 
   useEffect(() => {
     if (message) {
@@ -21,22 +20,38 @@ const LoginWithOTP = () => {
 
       return () => clearTimeout(timer); // Cleanup on component unmount
     }
-  }, [message]); // Runs whenever `message` changes
+  }, [message, setMessage]); // Runs whenever `message` changes
 
   // Handle Email Submission
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("processing");
+    setErrorMessage("");
 
-      if (!email){
-        setErrorMessage("Enter your email");
-        setTimeout(() => setStatus('idle'), 2000);
-      };
+    if (!email) {
+      setErrorMessage("Enter your email");
+      setStatus("idle");
+      return;
+    }
 
+    // Improved email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Please enter a valid email address.");
+      setStatus("idle");
+      return;
+    }
+
+    try {
       await sendOtp(email);
       setStatus("success");
-      setTimeout(() => setStatus('idle'), 2000);
-      setTimeout(() => setStep(2), 2000);
+    } catch (error) {
+      console.log(error);
+      setErrorMessage("Failed to send OTP. Please try again.");
+      setStatus("error");
+    } finally {
+      setTimeout(() => setStatus("idle"), 2000);
+    }
   };
 
   // Handle OTP Verification
@@ -49,19 +64,22 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
     setErrorMessage("Enter OTP!");
     setTimeout(() => setStatus('idle'), 2000);
   }
-
-  const success = await verifyOtp(otp);
-  if (success) {
-    setTimeout(() => setStatus("idle"), 1000);
-  } 
-  setTimeout(() => setStatus("idle"), 1000);
+  try {
+    await verifyOtp(otp);
+  } catch (error) {
+    console.error(error);
+    setErrorMessage("Failed to verify OTP. Please try again.");
+    setStatus("error");
+  } finally {
+    setTimeout(() => setStatus("idle"), 2000);
+  }
 };
 
 
   return (
     <section className="bg-greylight flex flex-col justify-center items-center h-screen p-4 relative">
       {/* Status Message */}
-        <span className=" py-2 px-4 rounded text-sm text-gray-400 absolute top-7">
+        <span className="flex py-2 px-4 rounded text-sm text-gray-400 absolute top-7">
          <p className="text-green-500"> {message}</p>
          <p className="text-warningactive"> {errorMessage}</p>
         </span>
@@ -125,7 +143,7 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
                   </label>
                 </div>
                 <a
-                  href="/recover-password"
+                  href="/recover-password" target="_blank"
                   className="underline text-linkcolor"
                 >
                   Forgot password?

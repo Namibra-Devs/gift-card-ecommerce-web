@@ -12,6 +12,7 @@ interface AuthContextType {
   message: string;
   setMessage: React.Dispatch<React.SetStateAction<string>>;
   logoutMessage: string | null;
+  step: number; // Added step property
 }
 
 export const AuthContext = React.createContext<AuthContextType | undefined>(
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userId, setUserId] = useState<string | null>(() => localStorage.getItem("userId") || null);
   const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!token);
+  const [step, setStep] = useState(1); // 1: Email input, 2: OTP input and verification
 
   //Status Messages state variables
   const [message, setMessage] = useState("");
@@ -49,14 +51,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // 1. Send OTP (Login/Register) =======
   const sendOtp = async (email: string) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
     try {
-      const response = await axios.post(`${apiUrl}/auth/login`,{ email },
-      {
-        headers: {
-        Authorization: `Bearer`,
-        },
-      }
+      const response = await axios.post(
+        `${apiUrl}/auth/login`,
+        { email },
+        {
+          headers: {
+            Authorization: `Bearer`,
+          },
+        }
       );
+
+      if (!response.data.success || !response.data.data) {
+        setMessage(response.data.message || "No account found with this email");
+        return;
+      }
 
       if (response.data.success) {
         const fetchedUserId = response.data.data.userId;
@@ -65,16 +75,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         currentUrl.searchParams.set("userId", fetchedUserId);
         window.history.replaceState({}, "", currentUrl.toString());
 
-        // Update state//
+        // Update state
         setUserId(fetchedUserId);
         console.log("Sent. User ID:", response.data.data.userId);
         setMessage("Verification code sent.");
+
+        setTimeout(() => setStep(2), 2000);
       } else {
-        setMessage("Failed to send OTP");
+        setMessage(response.data.message || "Failed to send OTP");
         throw new Error(response.data.message || "Failed to send OTP.");
       }
-    } catch (error) {
-      console.error("Send OTP Error:", error);
+    } catch (err) {
+      if(axios.isAxiosError(err)){
+        setMessage(err.response?.data?.message || err);
+      }else{
+        setMessage("Login Failed!");
+      }
     }
   };
 
@@ -177,7 +193,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         verifyOtp,
         logout,
         refreshAccessToken,
-        message, setMessage, logoutMessage,
+        message, setMessage, logoutMessage, step
       }}
     >
       {children}

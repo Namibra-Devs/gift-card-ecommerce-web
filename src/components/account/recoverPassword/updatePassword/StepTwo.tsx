@@ -7,7 +7,7 @@ const StepTwo = () => {
 
       {/* Continue Button */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/login")}
         type="button"
         className="w-full px-[24px] py-[14px] mt-8 bg-greynormal text-white rounded-[8px] font-normal flex justify-center items-center"
       >

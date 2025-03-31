@@ -15,12 +15,14 @@ const App = () => {
   return (
     <BrowserRouter basename="">
       <div>
-        {logoutMessage && (
-          <div
-            className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-300 text-greynormal px-4 py-2 transition-transform duration-500 ease-in-out translate-y-[-50px] opacity-0 animate-show">
+       <div className="flex items-center justify-center">
+       {logoutMessage && (
+          <span
+            className="absolute top-5 bg-green-300 text-greynormal px-4 py-2 transition-transform duration-500 ease-in-out translate-y-[-50px] opacity-0 animate-show">
             {logoutMessage}
-          </div>
+          </span>
         )}
+       </div>
 
         <Routes>
           <Route path="/" element={<Home />} />
