@@ -45,9 +45,10 @@ const RegisterAcc = () => {
     setError("");
     setSuccess("");
 
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
     try {
       const response = await axios.post(
-        "https://gift-card-ecommerce-api.onrender.com/api/auth/register",
+        `${apiUrl}/auth/register`,
         {
           firstName: formData.firstName,
           lastName: formData.lastName,

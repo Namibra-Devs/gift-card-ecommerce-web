@@ -21,25 +21,40 @@ const StepOne: React.FC<StepOneProps> = ({ setStep }) => {
   useEffect(() => {
     // Append email and userId to the URL as query parameters
     const queryParams = new URLSearchParams({ email, userId });
-    const newUrl = `${window.location.origin}${window.location.pathname}?${queryParams.toString()}`;
+    const newUrl = `${window.location.origin}${
+      window.location.pathname
+    }?${queryParams.toString()}`;
     window.history.replaceState(null, "", newUrl);
   }, [email, userId]);
 
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    
     e.preventDefault();
     setLoading(true);
-    
-    setMessage("");
-    setStep(2);
 
+    setMessage("");
+
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
     try {
       // Simulate API request (Replace with actual API endpoint)
-      const response = await axios.post("https://gift-card-ecommerce-api.onrender.com/api/auth/forgot-password", { email });
+      const response = await axios.post(`${apiUrl}/auth/forgot-password`, {
+        email,
+      });
+      const fetchedUserId = response.data.data.userId;
+      // Store in URL as a query parameter
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("userId", fetchedUserId);
+      window.history.replaceState({}, "", currentUrl.toString());
 
-      setUserId(response.data.data.userId);
+      // Store userId in localStorage
+      localStorage.setItem("userId", fetchedUserId);
+
+      // Update state
+      setUserId(fetchedUserId);
+
       setMessage("A password reset link has been sent to your email.");
-      
+
+      setStep(2);
     } catch (error) {
       console.log(error);
       setMessage("Error sending password reset email. Try again.");

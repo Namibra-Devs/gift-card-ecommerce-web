@@ -3,23 +3,45 @@ import axios from "axios";
 const StepTwo = () => {
   const [resent, setResent] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("example@example.com");
+  const [userId, setUserId] = useState("");
 
+  useEffect(() => {
+      // Save email and userId to local storage whenever it changes
+      localStorage.setItem("userData", JSON.stringify({ email, userId }));
+    }, [email, userId]);
+    
   useEffect(() => {
     // Retrieve email from local storage
     const storedEmail = JSON.parse(localStorage.getItem('userData') || "");
     console.log(storedEmail);
     if (storedEmail) setEmail(storedEmail.email); //
-  }, []); //Should duplicate the useEffects for the userId retrival?
+  }, []);
 
+
+  const handleContinue = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    window.location.href = "/update-password";
+  };
 
   const handleResend = async () => {
     setResent(true);
     
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
     try {
       // Simulate API request (Replace with actual API endpoint)
-      const response = await axios.post("https://gift-card-ecommerce-api.onrender.com/api/auth/forgot-password", { email });
+      const response = await axios.post(`${apiUrl}/auth/forgot-password`, { email });
 
       if (response.data.success) {
+        // Store in URL as a query parameter      
+        const fetchedUserId = response.data.data.userId;
+        console.log(fetchedUserId);
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("userId", fetchedUserId);
+        window.history.replaceState({}, "", currentUrl.toString());
+
+        // Update state
+        setUserId(fetchedUserId);
+
         setTimeout(() => {
           setResent(false);
           alert("Verification code resent!");
@@ -46,8 +68,16 @@ const StepTwo = () => {
 
         <p className="text-gray-600 mb-6">
           An email with instructions to verify your email address has been sent
-          to <strong >{email}</strong>
+          to <strong >{email}</strong> 
+          <button
+            type="button"
+            onClick={handleContinue}
+            className="text-blue-600 hover:underline mx-1"
+            disabled={resent}
+          > Continue and setup your new password
+          </button>
         </p>
+        
 
         <p className="text-gray-600 text-center">
           Haven’t received a verification code in your email?

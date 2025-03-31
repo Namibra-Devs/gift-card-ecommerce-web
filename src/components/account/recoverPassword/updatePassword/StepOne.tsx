@@ -6,9 +6,7 @@ interface StepOneProps {
   setStep: Dispatch<SetStateAction<number>>;
 }
 
-
-const StepOne: React.FC<StepOneProps> = ({setStep}) => {
-
+const StepOne: React.FC<StepOneProps> = ({ setStep }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [checked, setChecked] = useState(false);
@@ -16,9 +14,10 @@ const StepOne: React.FC<StepOneProps> = ({setStep}) => {
   const [message, setMessage] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
 
-useEffect(() => {
-    // Retrieve email from local storage
+  useEffect(() => {
+    // Retrieve userId from local storage
     const storedUserId = localStorage.getItem("userId");
+    console.log(storedUserId);
     if (storedUserId) setUserId(storedUserId);
   }, []);
 
@@ -50,13 +49,17 @@ useEffect(() => {
       return;
     }
 
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
     try {
       // Simulate API request (Replace with actual API endpoint)
-     const response = await axios.post("https://gift-card-ecommerce-api.onrender.com/api/auth/reset-password", { password, userId });
-      
-     setMessage(response.data.message);
-     setStep(2);
+      const response = await axios.post(`${apiUrl}/auth/reset-password`, {
+        password,
+        userId,
+      });
 
+      setMessage(response.data.message);
+      setStep(2);
     } catch (error) {
       console.log(error);
       setMessage("Error sending password reset email. Try again.");
@@ -78,8 +81,10 @@ useEffect(() => {
             You need to change your password
           </p>
         </div>
-        
-        {message && <p className="text-sm text-warningactive mb-4">{message}</p>}
+
+        {message && (
+          <p className="text-sm text-warningactive mb-4">{message}</p>
+        )}
 
         <form onSubmit={handleSubmit} className="w-full">
           <div className="flex flex-col mb-6">

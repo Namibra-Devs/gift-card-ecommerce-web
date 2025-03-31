@@ -6,6 +6,7 @@ const api = axios.create({
   baseURL: "https://gift-card-ecommerce-api.onrender.com/api",
   headers: { "Content-Type": "application/json" },
 });
+
 let refreshAccessToken: () => Promise<void> = () => Promise.resolve();
 
 const useSetRefreshAccessToken = () => {

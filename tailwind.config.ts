@@ -41,6 +41,20 @@ const config: Config = {
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
       },
+      keyframes: {
+        slideIn: {
+          "0%": { transform: "translateY(-50px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        slideOut: {
+          "0%": { transform: "translateY(0)", opacity: "1" },
+          "100%": { transform: "translateY(-50px)", opacity: "0" },
+        },
+      },
+      animation: {
+        show: "slideIn 0.5s ease-out forwards",
+        hide: "slideOut 0.5s ease-in forwards",
+      },
     },
   },
   plugins: [

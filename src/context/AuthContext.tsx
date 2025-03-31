@@ -9,6 +9,10 @@ interface AuthContextType {
   verifyOtp: (otp: string) => Promise<boolean>;
   logout: () => void;
   refreshAccessToken: () => Promise<void>;
+  message: string;
+  setMessage: React.Dispatch<React.SetStateAction<string>>;
+  logoutMessage: string | null;
+  step: number; // Added step property
 }
 
 export const AuthContext = React.createContext<AuthContextType | undefined>(
@@ -18,8 +22,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userId, setUserId] = useState<string | null>(() => localStorage.getItem("userId") || null);
   const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!token);
+  const [step, setStep] = useState(1); // 1: Email input, 2: OTP input and verification
+
+  //Status Messages state variables
+  const [message, setMessage] = useState("");
+  const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
+
   // Load auth state on app startup ======
-  
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -42,31 +51,46 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // 1. Send OTP (Login/Register) =======
   const sendOtp = async (email: string) => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
     try {
-      const response = await axios.post(`${apiUrl}/auth/login`,{ email },
-      {
-        headers: {
-        Authorization: `Bearer`,
-        },
-      }
+      const response = await axios.post(
+        `${apiUrl}/auth/login`,
+        { email },
+        {
+          headers: {
+            Authorization: `Bearer`,
+          },
+        }
       );
 
+      if (!response.data.success || !response.data.data) {
+        setMessage(response.data.message || "No account found with this email");
+        return;
+      }
+
       if (response.data.success) {
-        const fetchedUserId = response.data.data.userId; //Ok
+        const fetchedUserId = response.data.data.userId;
         // Store in URL as a query parameter
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set("userId", fetchedUserId);
         window.history.replaceState({}, "", currentUrl.toString());
 
-        // Update state//
+        // Update state
         setUserId(fetchedUserId);
-
         console.log("Sent. User ID:", response.data.data.userId);
+        setMessage("Verification code sent.");
+
+        setTimeout(() => setStep(2), 2000);
       } else {
+        setMessage(response.data.message || "Failed to send OTP");
         throw new Error(response.data.message || "Failed to send OTP.");
       }
-    } catch (error) {
-      console.error("Send OTP Error:", error);
+    } catch (err) {
+      if(axios.isAxiosError(err)){
+        setMessage(err.response?.data?.message || err);
+      }else{
+        setMessage("Login Failed!");
+      }
     }
   };
 
@@ -79,6 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (!storedUserId) {
         console.error("No User ID found! Please request OTP first.");
+        setMessage("No User ID found! Please request OTP first.");
         return false;
       }
 
@@ -91,13 +116,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
       if (response.data.success && response.data.token) {
+        setMessage("OTP Verified, Login Successfull!");
         const newToken = response.data.token;
         setToken(newToken);
         axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
         console.log("OTP Verified! Token:", newToken);
-        window.location.href = "/";
+        // Delay redirect by 3 seconds
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 3000);
         return true;
       } else {
+        setMessage("Error Verifying OTP, Try again!");
         throw new Error(response.data.message);
       }
     } catch (error) {
@@ -108,25 +138,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // 3. Logout Function =======
   const logout = async () => {
-    try{
+    try {
       setIsAuthenticated(false);
-    setToken(null);
-    localStorage.removeItem("userId");
-    localStorage.removeItem("token");
-    delete axios.defaults.headers.common["Authorization"];
-    setIsAuthenticated(false);
-
-    setTimeout(() => {
-      alert("Logout Successfully");
-    },3000);
-
-    console.log("User logged out");
-    window.location.href = "/";
-    }catch(error){
-      console.log(error);
+      setToken(null);
+      localStorage.removeItem("userId");
+      localStorage.removeItem("token");
+      delete axios.defaults.headers.common["Authorization"];
+  
+      // Show logout message
+      setLogoutMessage("Logged out successfully!");
+  
+      // Hide message after 2 seconds
       setTimeout(() => {
-        alert("Error while logging out, try again");
-      },3000);
+        setLogoutMessage(null);
+        window.location.href = "/";
+      }, 2000);
+      
+    } catch (error) {
+      console.log(error);
+      alert("Error while logging out, try again");
     }
   };
 
@@ -163,6 +193,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         verifyOtp,
         logout,
         refreshAccessToken,
+        message, setMessage, logoutMessage, step
       }}
     >
       {children}
