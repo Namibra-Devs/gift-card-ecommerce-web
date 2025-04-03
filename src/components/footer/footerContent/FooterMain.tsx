@@ -8,7 +8,7 @@ const FooterMain: React.FC = () => {
         {/* Logo & Contact */}
         <div className="flex flex-col items-start gap-6 md:gap-12">
           <img src="/favicon.png" alt="PrepaidBanc" />
-          <button className="hidden md:block px-[24px] py-[15px] text-normal bg-greynormal text-white rounded-[8px]">
+          <button type="button" className="hidden md:block px-[24px] py-[15px] font-medium bg-greynormal hover:bg-greynegative hover:text-greynormal duration-700 text-white rounded-[8px]">
             Contact Us
           </button>
           <a href="/" className="block md:hidden text-grey font-normal">email@email.com</a>

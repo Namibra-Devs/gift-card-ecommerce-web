@@ -7,6 +7,8 @@ import RecoverPassword from "./pages/RecoverPassword";
 import UpdatePassword from "./pages/UpdatePassword";
 import AccountMain from "./components/account/AccountMain";
 import { useAuth } from "./context/useAuth";
+import GiftCardDetailsPage from "./pages/GiftCardDetailsPage";
+import GiftCardDetails from "./components/giftcards/GiftCardDetails";
 
 const App = () => {
   const { isAuthenticated, logoutMessage } = useAuth();
@@ -30,10 +32,10 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/recover-password" element={<RecoverPassword />} />
           <Route path="/update-password" element={<UpdatePassword />} />
-          <Route
-            path="/account"
-            element={isAuthenticated ? <AccountMain /> : ""}
-          />
+          <Route path="/account" element={isAuthenticated ? <AccountMain /> : ""}/>
+
+          <Route path="/card-details" element={<GiftCardDetailsPage />} />
+          <Route path="/dev" element={<GiftCardDetails />} />
           {/* <Route path="*" element={<PageNotFound />} /> */}
         </Routes>
       </div>
