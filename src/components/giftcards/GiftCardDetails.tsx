@@ -1,15 +1,30 @@
 import { useState } from "react";
 // import BuyAsGiftModal from "./BuyAsGiftModal";
 
-import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
 import { FaUser } from "react-icons/fa6";
+import BuyAsGiftModal from "./BuyAsGiftModal";
 
 const GiftCardDetails = () => {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [showCustomInput, setShowCustomInput] = useState(false);
-  // const [showGiftModal, setShowGiftModal] = useState(false);
+  const [showGiftModal, setShowGiftModal] = useState(false);
 
+  interface GiftCard {
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    image: string;
+  }
+  // Mock gift card data - replace with your actual data
+  const giftCard: GiftCard = {
+    id: "1",
+    title: "Nintendo Gift Card",
+    description: "A versatile gift card for Nintendo Switch games and content.",
+    price: 50,
+    image: "/nintendo-gift-card.png"
+  };
   // State for collapsible sections
   const [expandedSections, setExpandedSections] = useState({
     description: true,
@@ -64,11 +79,11 @@ const GiftCardDetails = () => {
 
 
   return (
-    <div className="bg-white py-7 px-16">
+    <div className="bg-white py-7 px-4 md:px-14">
       <div className="flex flex-col md:flex-row items-start justify-between gap-12">
         {/* Card Image */}
-        <div className="max-w-[50%] flex flex-col gap-8">
-          <div className="bg-greylight p-24 flex items-center justify-center">
+        <div className="w-full md:max-w-[50%] flex flex-col gap-8">
+          <div className="bg-greylight p-12 md:p-24 flex items-center justify-center">
             <img src="/ninetendo-lg.png" alt="" />
           </div>
           {/* Smaller images */}
@@ -76,27 +91,27 @@ const GiftCardDetails = () => {
             <img
               src="/ninetendo-lg-mini.png"
               alt=""
-              className="w-full object-cover"
+              className="w-full h-14 object-cover"
             />
             <img
               src="/ninetendo-lg-mini.png"
               alt=""
-              className="w-full object-cover"
+              className="w-full h-14 object-cover"
             />
             <img
               src="/ninetendo-lg-mini.png"
               alt=""
-              className="w-full object-cover"
+              className="w-full h-14 object-cover"
             />
             <img
               src="/ninetendo-lg-mini.png"
               alt=""
-              className="w-full object-cover"
+              className="w-full h-14 object-cover"
             />
           </div>
         </div>
 
-        <div className="max-w-[50%]">
+        <div className="w-full md:max-w-[50%]">
           {/* Header */}
           <h1 className="text-2xl font-medium text-greynormal mb-4">
             Nintendo Gift Card
@@ -108,9 +123,9 @@ const GiftCardDetails = () => {
               onClick={() => toggleSection("description")}
               className="flex justify-between items-center w-full text-left"
             >
-              <h2 className="text-sm text-gray-600">Description</h2>
+              <h2 className="text-sm text-greynormal">Description</h2>
               <span className="text-gray-500">
-                {expandedSections.description ? <FaChevronUp /> : <FaChevronDown />}
+                {expandedSections.description ? <img src="/icons/arrow-up.png" alt="Up" /> : <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
 
@@ -138,9 +153,9 @@ const GiftCardDetails = () => {
           </section>
 
           {/* Amount Selection Section */}
-          <section className="mb-8">
+          <section className="mb-8 w-full">
             <h2 className="font-normal mb-4">Select Amount</h2>
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center flex-wrap md:flex-nowrap gap-2 md:gap-4 mb-6">
               {presetAmounts.map((amount) => (
                 <button
                   key={amount}
@@ -154,25 +169,28 @@ const GiftCardDetails = () => {
                   ${amount}
                 </button>
               ))}
-              <button
-                onClick={handleCustomAmount}
-                className={`py-[10px] px-6 border rounded-[100px] text-center font-normal transition-colors ${
-                  showCustomInput || selectedAmount === null
-                     ? "border border-greynormal bg-greynormal text-white"
-                    : "border-greylight hover:border-gray-500"
-                }`}
-              >
-                Customize
-              </button>
+              <div className="flex items-center gap-2 md:gap-4">
+                <button
+                  onClick={handleCustomAmount}
+                  className={`py-[10px] px-6 border rounded-[100px] text-center font-normal transition-colors ${
+                    showCustomInput || selectedAmount === null
+                      ? "border border-greynormal bg-greynormal text-white"
+                      : "border-greylight hover:border-gray-500"
+                  }`}
+                >
+                  Customize
+                </button>
 
-                <input
-                  type="number"
-                  value={customAmount}
-                  onChange={handleCustomAmountChange}
-                  placeholder="Enter amount"
-                  className="w-full p-3 border border-greylight bg-greylight rounded-lg focus:border-red-500 focus:outline-none"
-                  min="1"
-                />
+                  <input
+                    id="custom-price"
+                    type="number"
+                    value={customAmount}
+                    onChange={handleCustomAmountChange}
+                    placeholder="Enter amount"
+                    className="w-full py-2.5 px-3 border border-greylight bg-greylight rounded-lg focus:border-red-500 focus:outline-none appearance-none [-moz-appearance:textfield]"
+                    min="1"
+                  />
+              </div>
 
             </div>
 
@@ -189,13 +207,13 @@ const GiftCardDetails = () => {
               </div>
             )} */}
 
-            <div className="flex gap-2 mt-6">
-              <button className="bg-greynormal hover:bg-red-700 text-white py-4 px-10 rounded-lg transition-colors">
+            <div className="flex flex-col md:flex-row gap-4 md:gap-2 mb-16 mt-14 bg-greylight md:bg-transparent p-4 md:p-0">
+              <button className="bg-greynormal hover:bg-red-700 text-white py-5 px-10 rounded-[6px] transition-colors">
                 Add to cart
               </button>
               <button
-                // onClick={() => setShowGiftModal(true)}
-                className="bg-greylight hover:bg-gray-300 text-graynormal py-4 px-10 rounded-lg transition-colors"
+                onClick={() => setShowGiftModal(true)}
+                className="bg-white md:bg-transparent md:hover:bg-greylight md:border border-greylight text-graynormal py-5 px-10 rounded-[6px] transition-colors"
               >
                 Buy as gift
               </button>
@@ -210,7 +228,7 @@ const GiftCardDetails = () => {
             >
               <h2 className="font-normal">How to Redeem</h2>
               <span className="text-gray-500">
-              {expandedSections.howToRedeem ? <FaChevronUp /> : <FaChevronDown />}
+              {expandedSections.howToRedeem ? <img src="/icons/arrow-up.png" alt="Up" /> : <img src="/icons/arrow-down.png" alt="Down" /> }
               </span>
             </button>
 
@@ -236,7 +254,7 @@ const GiftCardDetails = () => {
             >
               <h2 className="font-normal">Terms and Conditions</h2>
               <span className="text-gray-500">
-              {expandedSections.terms ? <FaChevronUp /> : <FaChevronDown />}
+              {expandedSections.terms ? <img src="/icons/arrow-up.png" alt="Up" /> : <img src="/icons/arrow-down.png" alt="Down" /> }
               </span>
             </button>
 
@@ -260,7 +278,7 @@ const GiftCardDetails = () => {
             >
               <h2 className="font-normal">Reviews</h2>
               <span className="text-gray-500">
-              {expandedSections.reviews ? <FaChevronUp /> : <FaChevronDown />}
+              {expandedSections.reviews ? <img src="/icons/arrow-up.png" alt="Up" /> : <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
 
@@ -320,6 +338,13 @@ const GiftCardDetails = () => {
               Buy Now
             </button>
           </div>
+
+          {/* Buy as Gift Modal */}
+          <BuyAsGiftModal
+            isOpen={showGiftModal}
+            onClose={() => setShowGiftModal(false)}
+            giftCard={giftCard}
+          />
         </div>
       </div>
     </div>
