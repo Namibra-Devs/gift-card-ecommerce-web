@@ -45,7 +45,7 @@ const BuyAsGiftModal: React.FC<GiftCardModalProps> = ({ isOpen, onClose, giftCar
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end md:items-center"
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-end md:items-center"
       onClick={(e) => {
       if (e.target === e.currentTarget) {
         onClose();

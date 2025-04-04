@@ -6,14 +6,19 @@ import BuyAsGiftModal from "./BuyAsGiftModal";
 
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../store/CartSlice'
-
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import {useAuth} from "../../context/useAuth";
 const GiftCardDetails = () => {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [showGiftModal, setShowGiftModal] = useState(false);
+  const {isAuthenticated} = useAuth();
 
   const dispatch = useDispatch();
+  // Get cart data from Redux store
+  const {itemCount, total } = useSelector((state: RootState) => state.cart);
 
   interface GiftCard {
     id: number;
@@ -356,8 +361,20 @@ const GiftCardDetails = () => {
             isOpen={showGiftModal}
             onClose={() => setShowGiftModal(false)}
             giftCard={giftCard}
-          />
+          />          
         </div>
+
+        {/* Mobile Add to Cart History or Checkout */}
+        {isAuthenticated && itemCount > 0 && ( 
+          <div className="fixed bottom-4 left-4 right-4 md:hidden max-w-full bg-white p-[16px] shadow-xl border border-greylight rounded-[8px]">
+          <button
+            className="bg-greynormal rounded-[6px] py-[12px] px-[16px] text-white text-xs w-full"
+             title="Checkout, Items Selected and Total Amount">
+            {itemCount} Item added<span className="font-semibold"> ${total.toFixed(2)} </span> Checkout!
+          </button>
+          </div>
+        )}
+        
       </div>
     </div>
   );
