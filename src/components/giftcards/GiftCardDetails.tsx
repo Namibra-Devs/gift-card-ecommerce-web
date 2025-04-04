@@ -196,8 +196,8 @@ const GiftCardDetails = () => {
                     type="number"
                     value={customAmount}
                     onChange={handleCustomAmountChange}
-                    placeholder="Enter amount"
-                    className="w-full py-2.5 px-3 border border-greylight bg-greylight rounded-lg focus:border-red-500 focus:outline-none appearance-none [-moz-appearance:textfield]"
+                    placeholder="$5 - $1000 Max"
+                    className="w-full py-2.5 px-3 border border-greylight bg-ninetendobggrey rounded-lg focus:border-red-500 focus:outline-none appearance-none [-moz-appearance:textfield]"
                     min="1"
                   />
               </div>
@@ -217,6 +217,7 @@ const GiftCardDetails = () => {
               </div>
             )} */}
 
+              {/* Action Button */}
             <div className="flex flex-col md:flex-row gap-4 md:gap-2 mb-16 mt-14 bg-greylight md:bg-transparent p-4 md:p-0">
               <button
               onClick={() => dispatch(addToCart({
@@ -230,7 +231,7 @@ const GiftCardDetails = () => {
               </button>
               <button
                 onClick={() => setShowGiftModal(true)}
-                className="bg-white md:bg-transparent md:hover:bg-greylight md:border border-greylight text-graynormal py-5 px-10 rounded-[6px] transition-colors"
+                className="bg-white md:bg-transparent md:hover:bg-border md:border border-border text-graynormal py-5 px-10 rounded-[6px] transition-colors"
               >
                 Buy as gift
               </button>
