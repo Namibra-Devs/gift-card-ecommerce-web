@@ -9,11 +9,17 @@ import "antd/dist/reset.css";
 import { AuthProvider } from "./context/AuthContext";
 import { AuthProfileProvider } from "./context/profile/AuthProfileContext";
 
+//Redux
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProvider>
       <AuthProfileProvider>
-        <App />
+        <Provider store={store}>
+          <App />
+        </Provider>
       </AuthProfileProvider>
     </AuthProvider>
   </React.StrictMode>

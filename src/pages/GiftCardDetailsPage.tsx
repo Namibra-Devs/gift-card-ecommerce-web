@@ -1,11 +1,13 @@
-import GiftCardDetails from "../components/giftcards/GiftCardDetails"
+import GiftCardDetails from "../components/giftcards/GiftCardDetails";
+import Navbar from "../components/navbar/Navbar";
 
 const GiftCardDetailsPage = () => {
   return (
-    <div>
-        <GiftCardDetails/>
-    </div>
-  )
-}
+    <>
+      <Navbar />
+      <GiftCardDetails />
+    </>
+  );
+};
 
-export default GiftCardDetailsPage
+export default GiftCardDetailsPage;

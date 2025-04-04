@@ -8,7 +8,7 @@ import UpdatePassword from "./pages/UpdatePassword";
 import AccountMain from "./components/account/AccountMain";
 import { useAuth } from "./context/useAuth";
 import GiftCardDetailsPage from "./pages/GiftCardDetailsPage";
-import GiftCardDetails from "./components/giftcards/GiftCardDetails";
+import CartPage from "./pages/CartPage";
 
 const App = () => {
   const { isAuthenticated, logoutMessage } = useAuth();
@@ -34,8 +34,8 @@ const App = () => {
           <Route path="/update-password" element={<UpdatePassword />} />
           <Route path="/account" element={isAuthenticated ? <AccountMain /> : ""}/>
 
+          <Route path="/cart" element={<CartPage />} />
           <Route path="/card-details" element={<GiftCardDetailsPage />} />
-          <Route path="/dev" element={<GiftCardDetails />} />
           {/* <Route path="*" element={<PageNotFound />} /> */}
         </Routes>
       </div>

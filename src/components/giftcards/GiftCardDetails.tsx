@@ -4,23 +4,28 @@ import { useState } from "react";
 import { FaUser } from "react-icons/fa6";
 import BuyAsGiftModal from "./BuyAsGiftModal";
 
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../store/CartSlice'
+
 const GiftCardDetails = () => {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [showGiftModal, setShowGiftModal] = useState(false);
 
+  const dispatch = useDispatch();
+
   interface GiftCard {
-    id: string;
-    title: string;
+    id: number;
+    name: string;
     description: string;
     price: number;
     image: string;
   }
   // Mock gift card data - replace with your actual data
   const giftCard: GiftCard = {
-    id: "1",
-    title: "Nintendo Gift Card",
+    id: 1,
+    name: "Nintendo Gift Card",
     description: "A versatile gift card for Nintendo Switch games and content.",
     price: 50,
     image: "/nintendo-gift-card.png"
@@ -208,7 +213,14 @@ const GiftCardDetails = () => {
             )} */}
 
             <div className="flex flex-col md:flex-row gap-4 md:gap-2 mb-16 mt-14 bg-greylight md:bg-transparent p-4 md:p-0">
-              <button className="bg-greynormal hover:bg-red-700 text-white py-5 px-10 rounded-[6px] transition-colors">
+              <button
+              onClick={() => dispatch(addToCart({
+                id: giftCard.id,
+                name: giftCard.name,
+                price: giftCard.price,
+                image: giftCard.image
+              }))}
+              className="bg-greynormal hover:bg-red-700 text-white py-5 px-10 rounded-[6px] transition-colors">
                 Add to cart
               </button>
               <button
