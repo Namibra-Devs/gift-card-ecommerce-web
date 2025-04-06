@@ -19,6 +19,7 @@ const config: Config = {
         greylight: "#F7F7F7",
         greynegative: "#BFBFBF",
         greylightactive: "#B4B4B4",
+        border: "#E7E7E7",
         overlay: "rgba(0, 0, 0, 0.1)",
         greenlightactive: "#F7EFD3",
         bluelightactive: "#CED7F8",

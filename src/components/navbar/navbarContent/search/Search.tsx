@@ -58,7 +58,7 @@ const Search = () => {
       {/* Search Bar */}
       <div ref={searchRef} className="flex flex-1 max-w-md w-full mx-auto">
         <div className="w-[566px] bg-greylight flex items-center gap-2 px-[24px] py-[10px] rounded-[8px]">
-          <img src="icons/search.png" alt="Search icon" />
+          <img src="icons/search.png" alt="Search icon" className="h-4 " />
           <input
             type="text"
             placeholder="Search"
