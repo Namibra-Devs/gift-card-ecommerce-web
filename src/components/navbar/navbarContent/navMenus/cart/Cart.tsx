@@ -5,13 +5,13 @@ import CartCard from "./CartCard";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
-
+import { CartState } from "../../../../../store/store";
 const Cart = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   
   // Get cart data from Redux store
-  const { items, itemCount, total } = useSelector((state: RootState) => state.cart);
+  const { items, itemCount, total } = useSelector((state: RootState) => state.cart as CartState);
 
   return (
     <>

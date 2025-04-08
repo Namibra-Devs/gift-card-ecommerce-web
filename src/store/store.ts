@@ -1,6 +1,17 @@
 // store/store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import cartReducer from './CartSlice'; 
+import cartReducer from './cartSlice'; 
+
+export interface CartState {
+  items: { id: number; name: string; price: number; quantity: number }[];
+  itemCount: number;
+  total: number;
+}
+
+export interface AppState {
+  cart: CartState;
+  // other slices
+}
 
 export const store = configureStore({
   reducer: {
