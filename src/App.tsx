@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -15,7 +15,7 @@ const App = () => {
   console.log("User is authenticated:", isAuthenticated); // Example usage
 
   return (
-    <BrowserRouter basename="">
+    <Router>
       <div>
        <div className="flex items-center justify-center">
        {logoutMessage && (
@@ -39,7 +39,7 @@ const App = () => {
           {/* <Route path="*" element={<PageNotFound />} /> */}
         </Routes>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 };
 
