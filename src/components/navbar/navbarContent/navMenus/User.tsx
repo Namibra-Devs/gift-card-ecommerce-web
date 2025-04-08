@@ -3,6 +3,7 @@ import { useState } from "react";
 import UserIcon from "../../../../../public/icons/user-line.png";
 import { useAuth } from "../../../../context/useAuth";
 import { UseAuthProfile } from "../../../../context/profile/UseAuthProfile";
+import { Link } from "react-router-dom";
 const User = () => {
   const [userOpen, setUserOpen] = useState(false);
   const {isAuthenticated, logout} = useAuth();
@@ -36,12 +37,12 @@ const User = () => {
               className="absolute bg-white p-1.5 shadow-md border border-gray-100 rounded-[8px] left-0 right-0 top-10  w-[164px] "
             >
               <div className="flex flex-col items-start gap-2">
-                <a href="/account" className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
+                <Link to="/account" className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
                   Account
-                </a>
-                <a href="/orders" className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
+                </Link>
+                <Link to="/orders" className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
                   Orders
-                </a>
+                </Link>
                 <button onClick={logout} className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
                   Logout
                 </button>
