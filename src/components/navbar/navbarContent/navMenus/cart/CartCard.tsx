@@ -1,17 +1,17 @@
 import { GoPlusCircle } from "react-icons/go";
 import { RxMinusCircled } from "react-icons/rx";
 import { useDispatch } from "react-redux";
-import { updateQuantity} from "../../../../../store/CartSlice";
+import { updateQuantity} from "../../../../../store/cartSlice";
 
 interface CartItem {
   id: number;
-  image: string;
+  image?: string;
   name: string;
   price: number;
   quantity: number;
 }
 
-const CartCard = ({ item }: { item: CartItem }) => {
+const CartCard: React.FC<{ item: CartItem }> = ({ item }) => {
   const dispatch = useDispatch();
 
   return (

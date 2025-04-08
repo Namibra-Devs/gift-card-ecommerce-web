@@ -5,10 +5,12 @@ import { FaUser } from "react-icons/fa6";
 import BuyAsGiftModal from "./BuyAsGiftModal";
 
 import { useDispatch } from 'react-redux';
-import { addToCart } from '../../store/CartSlice'
+import { addToCart } from '../../store/cartSlice'
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {useAuth} from "../../context/useAuth";
+
+import { CartState } from "../../store/store";
 const GiftCardDetails = () => {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState<string>("");
@@ -18,7 +20,7 @@ const GiftCardDetails = () => {
 
   const dispatch = useDispatch();
   // Get cart data from Redux store
-  const {itemCount, total } = useSelector((state: RootState) => state.cart);
+  const {itemCount, total } = useSelector((state: RootState) => state.cart as CartState);
 
   interface GiftCard {
     id: number;
@@ -72,7 +74,7 @@ const GiftCardDetails = () => {
       id: 1,
       author: "Paul Amegah",
       date: new Date(2024, 9, 10), // October is month 9 (0-indexed)
-      content: "Perfect Gift for Gamers – Instant Fun and Flexibility! Unleash the possibilities in your Nintendo Switch with PrepaidBanc Nintendo eShop gift card. This versatile",
+      content: "Perfect Gift for Gamers - Instant Fun and Flexibility! Unleash the possibilities in your Nintendo Switch with PrepaidBanc Nintendo eShop gift card. This versatile",
       rating: 5
     },
     // Add more reviews as needed
