@@ -127,10 +127,11 @@ const Account = () => {
         </div>
       </div>
 
+      {/* Modal for editing user account details */}
       <AccountEditModal modalOpen={modalOpen} setModalOpen={setModalOpen} editField={editField} inputValue={inputValue} setInputValue={setInputValue} handleSave={handleSave} countries={countries} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} />
-
+      {/* Modal for Linking new Email Address */}
       <LinkEmailModal emailLinkModal={emailLinkModal}  setEmailLinkModal={setEmailLinkModal} emailToLink={emailToLink} setEmailToLink={setEmailToLink} handleLinkEmail={handleLinkEmail} />
-
+      {/* Notification Modal */}
       <NotificationModal notification={notification} />
     </div>
   );
