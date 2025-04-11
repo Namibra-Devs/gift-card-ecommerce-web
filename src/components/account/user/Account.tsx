@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UseAuthProfile } from "../../../context/profile/UseAuthProfile";
 import LinkEmailModal from "./modals/LinkEmailModal";
 import AccountEditModal from "./modals/AccountEditModal";
 import { countries } from "../../register/CountryCodes"
 import NotificationModal from "./modals/NotificationModal";
+import PhoneOtpVerifyModal from "./modals/PhoneOtpVerifyModal";
+import EmailOtpVerificationModal from "./modals/EmailOtpVerificationModal";
 
 type UserField = 'phone' | 'firstName' | 'lastName' | 'email' | 'username';
 
@@ -28,6 +30,16 @@ const Account = () => {
   const [emailLinkModal, setEmailLinkModal] = useState(false);
   const [emailToLink, setEmailToLink] = useState("");
 
+   // Phone OTP verification states
+   const [otpModalOpen, setOtpModalOpen] = useState(false);
+   const [phoneOtp, setPhoneOtp] = useState<string[]>(new Array(5).fill(""));
+   const [newPhoneNumber, setNewPhoneNumber] = useState("");
+
+    // Email OTP states
+  const [emailOtpModalOpen, setEmailOtpModalOpen] = useState(false);
+  const [emailOtp, setEmailOtp] = useState<string[]>(new Array(5).fill(""));
+  const [pendingEmail, setPendingEmail] = useState("");
+
   const handleEdit = (field: UserField) => {
     setEditField(field);
     if (field === 'phone') {
@@ -44,26 +56,114 @@ const Account = () => {
     setModalOpen(true);
   };
 
-  const handleSave = () => {
-    if (editField) {
-      const valueToSave = editField === 'phone' 
-        ? `${selectedCountry.code} ${phoneNumber}`
-        : inputValue;
-
-      // Simulate API call
+const handleSave = () => {
+    if (editField === 'phone') {
+      const fullPhoneNumber = `${selectedCountry.code} ${phoneNumber}`;
+      setNewPhoneNumber(fullPhoneNumber);
+      
+      // Simulate sending OTP to the new phone number
       setTimeout(() => {
-        setUserData(prev => ({ ...prev, [editField]: valueToSave }));
+        setOtpModalOpen(true);
         setModalOpen(false);
-        showNotification('success', `${editField.replace(/([A-Z])/g, " $1")} updated successfully`);
       }, 1000);
+    } else if (editField) {
+      // For other fields, update directly
+      setUserData(prev => ({ ...prev, [editField]: inputValue }));
+      setModalOpen(false);
+      showNotification('success', `${editField.replace(/([A-Z])/g, " $1")} updated successfully`);
     }
   };
 
-  const handleLinkEmail = () => {
-    // Simulate email linking API call
+  const handlePhoneOtpChange = (element: HTMLInputElement, index: number) => {
+    if (isNaN(Number(element.value))) return false;
+    
+    const newOtp = [...phoneOtp];
+    newOtp[index] = element.value;
+    setPhoneOtp(newOtp);
+    
+    // Focus next input
+    if (element.nextSibling && element.value) {
+      (element.nextSibling as HTMLInputElement).focus();
+    }
+  };
+
+  const handleEmailOtpChange = (element: HTMLInputElement, index: number) => {
+    if (isNaN(Number(element.value))) return false;
+    
+    const newOtp = [...emailOtp];
+    newOtp[index] = element.value;
+    setEmailOtp(newOtp);
+    
+    // Focus next input
+    if (element.nextSibling && element.value) {
+      (element.nextSibling as HTMLInputElement).focus();
+    }
+  };
+
+  useEffect(() => {
+    // Auto verify when all OTP digits are entered
+    if (phoneOtp.every(digit => digit !== "") && phoneOtp.length === 5) {
+      verifyPhoneOtp();
+    }
+  }, [phoneOtp]);
+
+  useEffect(() => {
+    // Auto verify email OTP when all digits are entered
+    if (emailOtp.every(digit => digit !== "") && emailOtp.length === 5) {
+      verifyEmailOtp();
+    }
+  }, [emailOtp]);
+
+  const verifyPhoneOtp = () => {
+    // Simulate OTP verification
     setTimeout(() => {
+      // In a real app, you would verify the OTP with your backend
+      const isValid = true; // Assume OTP is valid for demo
+      
+      if (isValid) {
+        setUserData(prev => ({ ...prev, phone: newPhoneNumber }));
+        setOtpModalOpen(false);
+        showNotification('success', 'Phone number changed successfully');
+        setPhoneOtp(new Array(5).fill("")); // Reset OTP
+      } else {
+        showNotification('error', 'Invalid verification code');
+      }
+    }, 1000);
+  };
+
+  const verifyEmailOtp = () => {
+    // Simulate OTP verification
+    setTimeout(() => {
+      const isValid = true; // Assume OTP is valid for demo
+      
+      if (isValid) {
+        setUserData(prev => ({ ...prev, email: pendingEmail }));
+        setEmailOtpModalOpen(false);
+        showNotification('success', 'Email linked successfully');
+        setEmailOtp(new Array(5).fill(""));
+      } else {
+        showNotification('error', 'Invalid verification code');
+      }
+    }, 1000);
+  };
+
+  const resendPhoneOtp = () => {
+    showNotification('success', 'Verification code resent to your phone');
+    setPhoneOtp(new Array(5).fill(""));
+  };
+
+  const resendEmailOtp = () => {
+    showNotification('success', 'Verification code resent to your email');
+    setEmailOtp(new Array(5).fill(""));
+  };
+
+  const handleLinkEmail = () => {
+    setPendingEmail(emailToLink);
+
+    // Simulate sending OTP to the new email address
+    setTimeout(() => {
+      setEmailOtpModalOpen(true);
       setEmailLinkModal(false);
-      showNotification('success', 'Email linked successfully');
       setUserData(prev => ({ ...prev, email: emailToLink }));
     }, 1000);
   };
@@ -129,6 +229,10 @@ const Account = () => {
 
       {/* Modal for editing user account details */}
       <AccountEditModal modalOpen={modalOpen} setModalOpen={setModalOpen} editField={editField} inputValue={inputValue} setInputValue={setInputValue} handleSave={handleSave} countries={countries} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} />
+      {/* Phone number verification Modals */}
+      <PhoneOtpVerifyModal isOpen={otpModalOpen} onClose={() => setOtpModalOpen(false)} phoneNumber={newPhoneNumber} phoneOtp={phoneOtp} handlePhoneOtpChange={handlePhoneOtpChange} resendPhoneOtp={resendPhoneOtp}/>
+      {/* Modal for Email Linking OTP verification */}
+      <EmailOtpVerificationModal isOpen={emailOtpModalOpen} onClose={() => setEmailOtpModalOpen(false)} email={pendingEmail}  emailOtp={emailOtp}  handleOtpChange={handleEmailOtpChange} resendEmailOtp={resendEmailOtp}/>
       {/* Modal for Linking new Email Address */}
       <LinkEmailModal emailLinkModal={emailLinkModal}  setEmailLinkModal={setEmailLinkModal} emailToLink={emailToLink} setEmailToLink={setEmailToLink} handleLinkEmail={handleLinkEmail} />
       {/* Notification Modal */}
