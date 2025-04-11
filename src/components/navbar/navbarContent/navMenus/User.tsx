@@ -36,16 +36,19 @@ const User = () => {
               animate={{ opacity: 1, y: 0 }}
               className="absolute bg-white p-1.5 shadow-md border border-gray-100 rounded-[8px] left-0 right-0 top-10  w-[164px] "
             >
-              <div className="flex flex-col items-start gap-2">
-                <Link to="/account" className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
-                  Account
-                </Link>
-                <Link to="/orders" className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
-                  Orders
-                </Link>
-                <button onClick={logout} className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
-                  Logout
-                </button>
+              <div
+              className="flex flex-col items-start gap-2"
+              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the dropdown
+              >
+              <Link to="/account" className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
+                Account
+              </Link>
+              <Link to="/orders" className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
+                Orders
+              </Link>
+              <button onClick={logout} className="min-w-full text-left px-[16px] py-[10px] rounded-[8px] hover:bg-greylight cursor-pointer">
+                Logout
+              </button>
               </div>
             </motion.div>
           )}
