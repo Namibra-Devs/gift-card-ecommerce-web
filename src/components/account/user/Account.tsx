@@ -1,18 +1,9 @@
 import { useState } from "react";
 import { UseAuthProfile } from "../../../context/profile/UseAuthProfile";
-
-// Country List (Flag, Code, Name)
-const countries = [
-  { code: "+1", name: "USA", flag: "🇺🇸" },
-  { code: "+44", name: "UK", flag: "🇬🇧" },
-  { code: "+233", name: "Ghana", flag: "🇬🇭" },
-  { code: "+234", name: "Nigeria", flag: "🇳🇬" },
-  { code: "+91", name: "India", flag: "🇮🇳" },
-  { code: "+61", name: "Australia", flag: "🇦🇺" },
-  { code: "+49", name: "Germany", flag: "🇩🇪" },
-  { code: "+33", name: "France", flag: "🇫🇷" },
-  { code: "+81", name: "Japan", flag: "🇯🇵" },
-];
+import LinkEmailModal from "./modals/LinkEmailModal";
+import AccountEditModal from "./modals/AccountEditModal";
+import { countries } from "../../register/CountryCodes"
+import NotificationModal from "./modals/NotificationModal";
 
 type UserField = 'phone' | 'firstName' | 'lastName' | 'email' | 'username';
 
@@ -136,165 +127,11 @@ const Account = () => {
         </div>
       </div>
 
-      {/* Edit Modal */}
-      {modalOpen && (
-        <div
-          onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            setModalOpen(false);
-          }
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-overlay bg-opacity-5 p-4">
-          <div className="flex flex-col justify-between bg-white rounded-[8px] shadow-lg w-[558px] h-[300px] overflow-hidden">
-            <div className="flex items-center justify-between bg-greylight p-4">
-              <h3 className="text-[15px] font-medium capitalize">Edit {editField}</h3>
-              <button 
-                type="button" 
-                onClick={() => setModalOpen(false)} 
-                className="h-7 w-7 flex items-center justify-center rounded-full bg-white text-grey"
-              >
-                <img src="/icons/close.png" alt="Close Icon" />
-              </button>
-            </div>
-            
-            <div className="flex flex-col px-4">
-              <label htmlFor="phoneNumber" className="text-greynegative capitalize mb-3">
-                {editField}
-              </label>
-              {editField === 'phone'? (
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-3 w-full">
-                      <label htmlFor="countryCode" className="sr-only">Country Code</label>
-                      <select
-                        id="countryCode"
-                        name="countryCode"
-                        value={selectedCountry.code}
-                        onChange={(e) => {
-                          const country = countries.find(c => c.code === e.target.value);
-                          if (country) setSelectedCountry(country);
-                        }}
-                        className="bg-transparent focus:outline-none border border-greylight px-2 py-[21px]  w-1/4 rounded-[8px]"
-                        >
-                        {countries.map((country) => (
-                          <option key={country.code} value={country.code}>
-                          {country.flag} {country.code}
-                          </option>
-                        ))}
-                      </select>
+      <AccountEditModal modalOpen={modalOpen} setModalOpen={setModalOpen} editField={editField} inputValue={inputValue} setInputValue={setInputValue} handleSave={handleSave} countries={countries} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} />
 
-                      <input
-                      type="text"
-                      name="phone"
-                      placeholder="0200000000"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      required
-                      className="bg-greylight w-full px-[24px] py-[21px] rounded-[8px]"
-                      />
-                    </div>
-                  </div>
-              ) : (
-                <input
-                  type={editField === 'email' ? 'email' : 'text'}
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="bg-greylight max-w-full px-[24px] py-[21px] rounded-[8px]"
-                  placeholder={`Enter ${editField}`}
-                />
-              )}
-            </div>
+      <LinkEmailModal emailLinkModal={emailLinkModal}  setEmailLinkModal={setEmailLinkModal} emailToLink={emailToLink} setEmailToLink={setEmailToLink} handleLinkEmail={handleLinkEmail} />
 
-            <div className="bg-greylight p-4 flex justify-end space-x-4">
-              <button 
-                onClick={() => setModalOpen(false)}
-                className="px-10 py-4 bg-white rounded-[8px] text-grey"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={handleSave}
-                className="px-10 py-4 bg-greynormal text-white rounded-[8px]"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Link Email Modal */}
-      {emailLinkModal && (
-        <div
-          onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            setEmailLinkModal(false);
-          }
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-overlay bg-opacity-50 p-4">
-          <div className="flex flex-col justify-between bg-white rounded-[8px] shadow-lg w-[558px] h-[300px] overflow-hidden">
-            <div className="flex justify-between items-center p-4 bg-greylight">
-              <h3 className="font-medium">Link Email</h3>
-              <button onClick={() => setEmailLinkModal(false)} className="h-7 w-7 flex items-center justify-center rounded-full bg-white text-grey">
-                <img src="/icons/close.png" alt="Close" className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-4">
-              <p className="text-greynegative mb-2">Email Address</p>
-              <input
-                type="email"
-                value={emailToLink}
-                onChange={(e) => setEmailToLink(e.target.value)}
-                className="bg-greylight w-full px-[24px] py-[21px] rounded-[8px]"
-                placeholder="Enter email"
-              />
-            </div>
-            <div className="bg-greylight p-4 flex justify-end space-x-4">
-              <button 
-                onClick={() => setEmailLinkModal(false)}
-                className="px-10 py-4 bg-white rounded-[8px] text-grey"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={handleLinkEmail}
-                className="px-10 py-4 bg-greynormal text-white rounded-[8px]"
-              >
-                Link Account
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Notification Status Modal*/}
-      {notification && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay bg-opacity-5 p-4">
-          <div className="flex flex-col justify-between items-center text-center bg-white p-8 rounded-[8px] max-w-5xl">
-            {notification.message && (
-              <div className="flex flex-col items-center text-center gap-6">
-                <span className="font-meidum capitalize">{notification.message}</span>
-                <img
-                  src={
-                    notification.type === "success"
-                      ? "/icons/check-mark.png"
-                      : notification.type === "error"
-                      ? "/icons/error.png"
-                      : ""
-                  }
-                  alt={
-                    notification.type === "success"
-                      ? "Success"
-                      : notification.type === "error"
-                      ? "Error"
-                      : ""
-                  }
-                  className="w-20 h-20 mb-2"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      <NotificationModal notification={notification} />
     </div>
   );
 };
