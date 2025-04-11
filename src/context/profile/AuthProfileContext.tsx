@@ -6,8 +6,10 @@ interface UserProfile {
   userId: string;
   firstName: string;
   lastName: string;
-  email: string;
+  username?: string;
   phone: string;
+  email: string;
+  newEmail: string;
   createdAt: string;
   updatedAt: string;
 }

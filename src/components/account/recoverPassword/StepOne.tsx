@@ -40,6 +40,7 @@ const StepOne: React.FC<StepOneProps> = ({ setStep }) => {
       const response = await axios.post(`${apiUrl}/auth/forgot-password`, {
         email,
       });
+
       const fetchedUserId = response.data.data.userId;
       // Store in URL as a query parameter
       const currentUrl = new URL(window.location.href);
