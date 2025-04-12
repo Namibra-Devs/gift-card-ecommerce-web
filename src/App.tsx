@@ -13,16 +13,16 @@ import CartPage from "./pages/auth/CartPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 const App: React.FC = () => {
-  const { isAuthenticated, logoutMessage } = useAuth();
+  const { isAuthenticated, logoutSignInMessage } = useAuth();
 
   return (
     <Router>
       <div>
        <div className="flex items-center justify-center">
-       {logoutMessage && (
+       {logoutSignInMessage && (
           <span
-            className="absolute top-5 bg-green-300 text-greynormal border-2 border-greylight px-4 py-2 transition-transform duration-500 ease-in-out translate-y-[-50px] opacity-0 animate-show">
-            {logoutMessage}
+            className="absolute top-5 bg-white text-grey text-xs border-l-2 rounded-md border-yellow-400 px-4 py-2 transition-transform duration-500 ease-in-out translate-y-[-50px] opacity-0 animate-show">
+            {logoutSignInMessage}
           </span>
         )}
        </div>
