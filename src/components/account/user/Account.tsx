@@ -30,12 +30,12 @@ const Account = () => {
   const [emailLinkModal, setEmailLinkModal] = useState(false);
   const [emailToLink, setEmailToLink] = useState("");
 
-   // Phone OTP verification states
-   const [otpModalOpen, setOtpModalOpen] = useState(false);
-   const [phoneOtp, setPhoneOtp] = useState<string[]>(new Array(5).fill(""));
-   const [newPhoneNumber, setNewPhoneNumber] = useState("");
+  // Phone OTP verification states
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [phoneOtp, setPhoneOtp] = useState<string[]>(new Array(5).fill(""));
+  const [newPhoneNumber, setNewPhoneNumber] = useState("");
 
-    // Email OTP states
+  // Email OTP states
   const [emailOtpModalOpen, setEmailOtpModalOpen] = useState(false);
   const [emailOtp, setEmailOtp] = useState<string[]>(new Array(5).fill(""));
   const [pendingEmail, setPendingEmail] = useState("");

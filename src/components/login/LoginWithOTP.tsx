@@ -87,13 +87,13 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
       {/* Form */}
       <form
         onSubmit={step === 1 ? handleEmailSubmit : handleOtpSubmit}
-        className="bg-white rounded-[24px] p-[60px] w-full md:w-[514px]"
+        className="bg-white rounded-[24px] px-4 py-8 md:p-[60px] w-full md:w-[514px]"
       >
         <div className="flex flex-col items-center text-center space-y-8 mb-6">
           <a href="/">
             <img src="/favicon.png" alt="PrepaidBanc" />
           </a>
-          <p className="text-greynormal">
+          <p className="text-grey">
             {step === 1
               ? "Please enter your email"
               : "Enter the password sent to your email"}
@@ -153,7 +153,7 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
           )}
           <button
             type="submit"
-            className="px-[24px] py-[14px] mt-8 bg-greynormal text-white rounded-[8px] flex justify-center items-center gap-1 disabled:opacity-70"
+            className="px-[24px] py-[14px] mt-8 bg-greynormal text-white font-medium rounded-[10px] flex justify-center items-center gap-1 disabled:opacity-70"
             disabled={status === "processing"}
           >
             {status === "processing" ? (
