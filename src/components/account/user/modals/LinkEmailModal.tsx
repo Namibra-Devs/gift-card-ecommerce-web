@@ -47,7 +47,7 @@ const LinkEmailModal: React.FC<LinkEmailModalProps> = ({ emailLinkModal, setEmai
                 onClick={handleLinkEmail}
                 className="px-10 py-4 bg-greynormal text-white rounded-[8px]"
               >
-                Link Account
+                Next
               </button>
             </div>
           </div>

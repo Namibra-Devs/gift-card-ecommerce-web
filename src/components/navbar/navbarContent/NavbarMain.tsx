@@ -7,7 +7,7 @@ import {Link} from "react-router-dom";
 
 const NavbarMain = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const {isAuthenticated} = useAuth();
+  const {isAuthenticated, logout} = useAuth();
 
   return (
     <>
@@ -50,7 +50,7 @@ const NavbarMain = () => {
                 <>
                   <Link to="/account" className="py-2 text-grey hover:text-greynormal">Account</Link>
                   <Link to="/orders" className="py-2 text-grey hover:text-greynormal">Orders</Link>
-                  <button type="button" className="py-2 text-grey hover:text-greynormal">Logout</button>
+                  <button  onClick={logout} type="button" className="py-2 text-grey hover:text-greynormal">Logout</button>
                 </>
               ) : (
                 <Link to="/login" className="py-2 text-grey hover:text-greynormal">Login</Link>

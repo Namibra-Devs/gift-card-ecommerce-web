@@ -86,7 +86,7 @@ const RegisterAcc = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen px-4 py-20 bg-greylight">
-      <div className="bg-white p-[40px] rounded-[24px] w-full max-w-lg">
+      <div className="bg-white px-4 py-8 md:p-[40px] rounded-[24px] w-full max-w-lg">
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center mb-6">
           <img src="/favicon.png" alt="PrepaidBanc" />
@@ -110,7 +110,7 @@ const RegisterAcc = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          <div className="flex space-x-2">
+          <div className="flex flex-col gap-6 md:gap-2">
             <div className="flex flex-col">
               <label htmlFor="FirstName" className="text-greynegative mb-3">
                 First Name
@@ -177,14 +177,14 @@ const RegisterAcc = () => {
             <label htmlFor="phoneNumber" className="text-greynegative mb-3">
               Phone Number
             </label>
-            <div className="flex space-x-2 relative">
+            <div className="flex gap-2 relative">
               <label htmlFor="countryCode" className="sr-only">Country Code</label>
               <select
                 id="countryCode"
                 name="countryCode"
                 value={formData.countryCode}
                 onChange={handleCountryChange}
-                className="bg-transparent focus:outline-none border border-greylight p-3 w-1/4 rounded-[8px]"
+                className="bg-transparent focus:outline-none text-xs border border-greylight p-3 w-20 md:w-1/4 rounded-[8px]"
               >
              
                 {countries.map((country) => (
@@ -254,7 +254,7 @@ const RegisterAcc = () => {
           {/* Register Button */}
           <button
             type="submit"
-            className="w-full px-[24px] py-[14px] mt-8 bg-greynormal text-white rounded-[8px] font-normal flex justify-center items-center"
+            className="w-full px-[24px] py-[14px] mt-8 bg-greynormal text-white rounded-[10px] font-medium flex justify-center items-center"
             disabled={loading}
           >
             {loading ? "Registering..." : "Register"}
