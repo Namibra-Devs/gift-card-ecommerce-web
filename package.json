@@ -2,7 +2,7 @@
   "name": "gift-card-ecommerce",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://prepaidbanc.netlify.app/",
+  "homepage": "https://gift-card-ecommerce-api/",
   "type": "module",
   "scripts": {
     "dev": "vite --open",
