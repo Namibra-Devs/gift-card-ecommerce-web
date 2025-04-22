@@ -9,11 +9,10 @@ interface UserProfile {
   username?: string;
   phone: string;
   email: string;
-  newEmail: string;
+  secondaryEmail: string;
   createdAt: string;
   updatedAt: string;
 }
-
 
 interface AuthProfileContextType {
   user: UserProfile | null;
@@ -21,13 +20,16 @@ interface AuthProfileContextType {
   loading: boolean;
 }
 
-export const AuthProfileContext = React.createContext<AuthProfileContextType | null>(null);
+export const AuthProfileContext =
+  React.createContext<AuthProfileContextType | null>(null);
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export const AuthProfileProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProfileProvider: React.FC<AuthProviderProps> = ({
+  children,
+}) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +37,11 @@ export const AuthProfileProvider: React.FC<AuthProviderProps> = ({ children }) =
     const fetchUserProfile = async () => {
       const apiUrl = import.meta.env.VITE_API_BASE_URL;
       const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+
+      if (!userId) {
+        console.log("User Id not found!, check again");
+      }
 
       if (!token) {
         setLoading(false);

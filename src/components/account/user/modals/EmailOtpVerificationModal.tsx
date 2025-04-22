@@ -20,7 +20,7 @@ const EmailOtpVerificationModal: React.FC<EmailOtpVerificationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4 md:px-0">
      <div className="bg-white rounded-lg max-w-md w-full overflow-hidden">
         <div className="flex justify-between items-center p-4 bg-greylight">
             <h3 className="font-medium">Verify Email</h3>
