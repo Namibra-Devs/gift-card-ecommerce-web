@@ -1,11 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { IGiftCard } from "../../../../context/Type";
+import { GiftCardItem } from "../../../../context/Type";
 import { BiLoaderCircle } from "react-icons/bi";
 
 interface SearchContentProps {
   query: string;
-  results: IGiftCard[];
+  results: GiftCardItem[];
   isLoading: boolean;
 }
 

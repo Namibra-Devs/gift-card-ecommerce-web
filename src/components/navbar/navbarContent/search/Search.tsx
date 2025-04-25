@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import SearchContent from "./SearchContent";
-import { IGiftCard } from "../../../../context/Type";  // Import GiftCard interface
+import { GiftCardItem } from "../../../../context/Type";  // Import GiftCard interface
 import axios from "axios";
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<IGiftCard[]>([]);
+  const [results, setResults] = useState<GiftCardItem[]>([]);
   const searchRef = useRef<HTMLDivElement | null>(null);
   let debounceTimer: NodeJS.Timeout | null = null;
 

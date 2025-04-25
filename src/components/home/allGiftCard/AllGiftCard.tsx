@@ -40,8 +40,9 @@ const AllGiftCard = () => {
       } catch (err) {
         console.error("Fetch error:", err);
         setError(
-          err.response?.data?.message || 
-          "Failed to load gift cards. Please try again later."
+          axios.isAxiosError(err) && err.response?.data?.message
+            ? err.response.data.message
+            : "Failed to load gift cards. Please try again later."
         );
       } finally {
         setLoading(false);
