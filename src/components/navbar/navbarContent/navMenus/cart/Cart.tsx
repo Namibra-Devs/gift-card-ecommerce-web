@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
 import { CartState } from "../../../../../store/store";
+// import { current } from "@reduxjs/toolkit";
 const Cart = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const { isAuthenticated } = useAuth();
@@ -19,9 +20,9 @@ const Cart = () => {
         <div
           className={`flex items-center gap-2 cursor-pointer rounded-[4px] p-[6px] ${
             cartOpen ? "bg-greylight " : "hover:bg-greylight duration-700"
-          } `}
-          onClick={() => setCartOpen(!cartOpen)}
-        >
+          }`}
+          onClick={() => setCartOpen(!cartOpen)}>
+            
           <img
             src="/icons/shopping-cart.png"
             alt="Cart Icon"
@@ -31,13 +32,14 @@ const Cart = () => {
         </div>
         
         {isAuthenticated && itemCount > 0 && (
-          <span className="absolute -top-2.5 left-2.5 bg-rednormal text-white text-xs px-1.5 py-0.5 rounded-full">
+          <span className="absolute -top-2.5 left-2.5 bg-rednormal flex items-center justify-center text-white text-xs w-5 h-5 rounded-full">
             {itemCount}
           </span>
         )}
 
         {isAuthenticated && cartOpen && (
-          <div className="relative">
+          <div 
+            className="relative">
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -48,7 +50,6 @@ const Cart = () => {
                   {items.map((item) => (
                     <CartCard key={item.id} item={item} />
                   ))}
-
                   <div>
                     <div className="flex items-center my-4 py-[18px] px-[16px]">
                       <span className="text-greynormal">Total Cart</span>

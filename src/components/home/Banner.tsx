@@ -6,7 +6,7 @@ const Banner: React.FC = () => {
       <div className="flex items-center justify-between">
 
         <div className="md:w-[45%]">
-        <img src="/gift-group.png" alt="Gift Card Group" className="w-[200px] md:w-full" />
+          <img src="/gift-group.png" alt="Gift Card Group" className="w-[200px] md:w-full" />
         </div>
 
         <div className=" text-center flex flex-col items-center gap-3">

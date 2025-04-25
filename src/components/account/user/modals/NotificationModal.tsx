@@ -16,7 +16,7 @@ const NotificationModal = ({ notification }: NotificationModalProps) => {
           <div className="flex flex-col justify-between items-center text-center bg-white p-8 rounded-[8px] max-w-5xl">
             {notification.message && (
               <div className="flex flex-col items-center text-center gap-6">
-                <span className="font-meidum capitalize">{notification.message}</span>
+                <span className="font-meidum capitalize text-grey">{notification.message}</span>
                 <img
                   src={
                     notification.type === "success"
