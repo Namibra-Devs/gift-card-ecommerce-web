@@ -37,7 +37,7 @@ const App: React.FC = () => {
             <Route path="/recover-password" element={isAuthenticated ? <RecoverPassword /> : <Navigate to="/login"/>} />
             <Route path="/update-password" element={isAuthenticated ? <UpdatePassword /> : <Navigate to="/login"/>} />
             <Route path="/cart" element={isAuthenticated ? <CartPage /> : <Navigate to="/login"/>} />
-            <Route path="/card-details" element={isAuthenticated ? <GiftCardDetailsPage /> : <Navigate to="/login"/>} />
+            <Route path="/gift-cards/:id" element={isAuthenticated ? <GiftCardDetailsPage /> : <Navigate to="/login"/>} />
           </Route>
           {/* <Route path="*" element={<PageNotFound />} /> */}
         </Routes>
