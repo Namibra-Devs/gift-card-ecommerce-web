@@ -22,7 +22,7 @@ const SearchContent: React.FC<SearchContentProps> = ({ query, results, isLoading
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
     transition={{ duration: 0.2 }}
-    className="fixed w-full h-60 px-4 md:px-[100px] py-4 left-0 top-32 md:top-24 mt-3 md:mt-2  bg-white border rounded shadow-md">
+    className="fixed z-50 w-full h-60 px-4 md:px-[100px] py-4 left-0 top-32 md:top-24 mt-3 md:mt-2  bg-white border rounded shadow-md">
       
       {isLoading && <div className="flex items-center justify-center gap-1"><BiLoaderCircle className="animate-spin delay-700 text-grey" /> <p className="text-grey text-sm mt-3">Searching...</p></div>}
 
