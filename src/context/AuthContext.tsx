@@ -150,17 +150,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       // Update state
       setToken(authToken);
-      setLogoutSignInMessage('Logged in successfully!');
       setMessage('Login successful! Redirecting...');
-
-      // Redirect with token in URL (if required)
-      const redirectUrl = new URL('/', window.location.origin);
-      redirectUrl.searchParams.set('token', authToken);
       
       // Delay redirect to show success message
       setTimeout(() => {
         setLogoutSignInMessage(null);
-        window.location.href = redirectUrl.toString();
+        window.location.href = '/';
       }, 2000);
 
     } catch (err) {

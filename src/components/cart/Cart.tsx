@@ -1,12 +1,24 @@
 import { useState } from "react";
+// import axios from "axios";
 import { FiTrash2} from "react-icons/fi";
 import { ActiveAddToCart } from "../../assets/Data";
 import CartItem from "./CartItem";
 
+// const apiUrl = import.meta.env.VITE_API_BASE_URL;
+// const token = localStorage.getItem("token");
 const Cart = () => {
   const [cartItems, setCartItems] = useState(ActiveAddToCart);
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
+
+  // useEffect(() => {
+  //   async const response =  await axios.get(`${apiUrl}/cart`, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //        'Authorization': `Bearer ${token}`
+  //     },
+  //   },)
+  // })
 
   // Calculate totals
   const subtotal = cartItems.reduce(
