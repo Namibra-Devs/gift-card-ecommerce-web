@@ -11,13 +11,18 @@ import { useAuth } from "./context/useAuth";
 import GiftCardDetailsPage from "./pages/auth/GiftCardDetailsPage";
 import CartPage from "./pages/auth/CartPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Footer from './components/footer/Footer';
+import Navbar from './components/navbar/Navbar';
 
 const App: React.FC = () => {
   const { isAuthenticated, logoutSignInMessage } = useAuth();
+  const hideFooterRoutes = ["/login", "/register"];
+  const hideNavbarRoutes = ["/login", "/register"];
 
   return (
     <Router>
-      <div>
+      
+
        <div className="flex items-center justify-center">
        {logoutSignInMessage && (
           <span
@@ -26,22 +31,28 @@ const App: React.FC = () => {
           </span>
         )}
        </div>
+        
+        <>
+          {/* Conditionally render Footer */}
+          {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-    
-          <Route element={<ProtectedRoute />}>
-            <Route path="/account" element={isAuthenticated ? <AccountMain /> : <Navigate to="/login"/>}/>
-            <Route path="/recover-password" element={isAuthenticated ? <RecoverPassword /> : <Navigate to="/login"/>} />
-            <Route path="/update-password" element={isAuthenticated ? <UpdatePassword /> : <Navigate to="/login"/>} />
-            <Route path="/cart" element={isAuthenticated ? <CartPage /> : <Navigate to="/login"/>} />
-            <Route path="/gift-cards/:id" element={isAuthenticated ? <GiftCardDetailsPage /> : <Navigate to="/login"/>} />
-          </Route>
-          {/* <Route path="*" element={<PageNotFound />} /> */}
-        </Routes>
-      </div>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+      
+            <Route element={<ProtectedRoute />}>
+              <Route path="/account" element={isAuthenticated ? <AccountMain /> : <Navigate to="/login"/>}/>
+              <Route path="/recover-password" element={isAuthenticated ? <RecoverPassword /> : <Navigate to="/login"/>} />
+              <Route path="/update-password" element={isAuthenticated ? <UpdatePassword /> : <Navigate to="/login"/>} />
+              <Route path="/cart" element={isAuthenticated ? <CartPage /> : <Navigate to="/login"/>} />
+              <Route path="/gift-cards/:id" element={isAuthenticated ? <GiftCardDetailsPage /> : <Navigate to="/login"/>} />
+            </Route>
+            {/* <Route path="*" element={<PageNotFound />} /> */}
+          </Routes>
+          {/* Conditionally render Footer */}
+          {!hideFooterRoutes.includes(location.pathname) && <Footer />}
+        </>
     </Router>
   );
 };

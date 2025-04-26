@@ -70,11 +70,11 @@ const AllGiftCard = () => {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 gap-y-14">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 gap-y-1 md:gap-y-14">
       {giftCards.map((item, index) => (
         <React.Fragment key={item._id}>
           <GiftCard item={item} />
-         {/* Full-width banner after 6th card */}
+         {/* Full-width banner after 5th card */}
          {index === 5 && (
             <div className="col-span-2 md:col-span-3">
               <Banner />
