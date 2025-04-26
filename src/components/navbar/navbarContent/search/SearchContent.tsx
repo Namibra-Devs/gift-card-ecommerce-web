@@ -25,7 +25,7 @@ const SearchContent: React.FC<SearchContentProps> = ({ query, results, isLoading
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
     transition={{ duration: 0.2 }}
-    className="fixed z-50 w-full max-h-60 overflow-y-auto px-4 md:px-[100px] py-4 left-0 top-32 md:top-24 mt-3 md:mt-2  bg-white border rounded shadow-md">
+    className="fixed z-50 w-full max-h-60 overflow-y-auto px-4 md:px-[100px] py-4 left-0 top-[133px] md:top-24 bg-white border-t border-greylight shadow-md">
       {isLoading ? (
         <div className="flex items-center justify-center p-4 gap-2">
           <BiLoaderCircle className="animate-spin text-gray-500" />
