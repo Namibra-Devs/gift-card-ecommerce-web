@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { FaUser } from "react-icons/fa6";
+import { FiArrowLeft } from "react-icons/fi";
 import BuyAsGiftModal from "./BuyAsGiftModal";
 import { useAuth } from "../../context/useAuth";
 
@@ -165,7 +166,13 @@ const GiftCardDetails = () => {
       ].filter((v, i, a) => a.indexOf(v) === i); // Remove duplicates
 
   return (
-    <div className="bg-white py-7 px-4 md:px-14">
+    <div className="bg-white py-7 px-4 md:px-24">
+      <button 
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 mb-6 text-blue-600 hover:text-blue-800"
+      >
+        <FiArrowLeft /> Back to all gift cards
+      </button>
       <div className="flex flex-col md:flex-row items-start justify-between gap-12">
         {/* Card Image Section */}
         <div className="w-full md:max-w-[50%] flex flex-col gap-8">
