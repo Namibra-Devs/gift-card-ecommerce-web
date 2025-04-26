@@ -1,43 +1,40 @@
-import { useState } from "react";
-// import BuyAsGiftModal from "./BuyAsGiftModal";
-
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from "axios";
 import { FaUser } from "react-icons/fa6";
+import { FiArrowLeft } from "react-icons/fi";
 import BuyAsGiftModal from "./BuyAsGiftModal";
+import { useAuth } from "../../context/useAuth";
 
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../../store/cartSlice'
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
-import {useAuth} from "../../context/useAuth";
+interface GiftCardDetails {
+  _id: string;
+  name: string;
+  description: string | { content: { title?: string; description: string }[] };
+  pricing: number[];
+  media: { image: string }[];
+  stock: number;
+  inStock: boolean;
+  image?: string;
+  min_price?: number;
+  max_price?: number;
+}
 
-import { CartState } from "../../store/store";
 const GiftCardDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const [card, setCard] = useState<GiftCardDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Cart state
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [showGiftModal, setShowGiftModal] = useState(false);
-  const {isAuthenticated} = useAuth();
+  const [cartMessage, setCartMessage] = useState('');
 
-  const dispatch = useDispatch();
-  // Get cart data from Redux store
-  const {itemCount, total } = useSelector((state: RootState) => state.cart as CartState);
-
-  interface GiftCard {
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-    image: string;
-  }
-  // Mock gift card data - replace with your actual data
-  const giftCard: GiftCard = {
-    id: 1,
-    name: "Nintendo Gift Card",
-    description: "A versatile gift card for Nintendo Switch games and content.",
-    price: 50,
-    image: "/nintendo-gift-card.png"
-  };
-  // State for collapsible sections
+  // Collapsible sections
   const [expandedSections, setExpandedSections] = useState({
     description: true,
     howToRedeem: false,
@@ -45,16 +42,34 @@ const GiftCardDetails = () => {
     reviews: true
   });
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
+  // Fetch gift card details
+  useEffect(() => {
+    const fetchGiftCardDetails = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        const response = await axios.get(`${apiUrl}/gift-cards/${id}`);
+        
+        if (response.data.success) {
+          setCard(response.data.data);
+        } else {
+          setError('Gift card not found');
+        }
+      } catch (err) {
+        setError('Failed to load gift card details');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchGiftCardDetails();
+  }, [id]);
+
+  // Handle amount selection
   const handleAmountSelect = (amount: number) => {
     setSelectedAmount(amount);
     setShowCustomInput(false);
+    setCustomAmount("");
   };
 
   const handleCustomAmount = () => {
@@ -66,21 +81,58 @@ const GiftCardDetails = () => {
     setCustomAmount(e.target.value);
   };
 
-  const presetAmounts = [20, 25, 30];
+  // Toggle sections
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
-  // Reviews data
-  const reviews = [
-    {
-      id: 1,
-      author: "Paul Amegah",
-      date: new Date(2024, 9, 10), // October is month 9 (0-indexed)
-      content: "Perfect Gift for Gamers - Instant Fun and Flexibility! Unleash the possibilities in your Nintendo Switch with PrepaidBanc Nintendo eShop gift card. This versatile",
-      rating: 5
-    },
-    // Add more reviews as needed
-  ];
+  // Add to cart API call
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
 
-  // Format date as "10 Oct 2024"
+    const amount = selectedAmount || parseFloat(customAmount);
+    if (!amount || amount <= 0) {
+      setCartMessage('Please select or enter a valid amount');
+      return;
+    }
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      const token = localStorage.getItem('token');
+      
+      const response = await axios.post(
+        `${apiUrl}/cart`,
+        {
+          giftCardId: card?._id,
+          amount: amount,
+          quantity: 1
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setCartMessage('Added to cart successfully!');
+        setTimeout(() => setCartMessage(''), 3000);
+      } else {
+        setCartMessage(response.data.message || 'Failed to add to cart');
+      }
+    } catch (err) {
+      setCartMessage('Failed to add to cart. Please try again.');
+      console.error(err);
+    }
+  };
+
+  // Format date for reviews
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
       day: 'numeric',
@@ -89,44 +141,66 @@ const GiftCardDetails = () => {
     });
   };
 
+  // Mock reviews data
+  const reviews = [
+    {
+      id: 1,
+      author: "Paul Amegah",
+      date: new Date(2024, 9, 10),
+      content: "Perfect Gift for Gamers - Instant Fun and Flexibility! Unleash the possibilities in your Nintendo Switch with PrepaidBanc Nintendo eShop gift card. This versatile",
+      rating: 5
+    }
+  ];
+
+  if (loading) return <div className="flex justify-center py-20">Loading...</div>;
+  if (error) return <div className="text-center py-20 text-red-500">{error}</div>;
+  if (!card) return null;
+
+  // Determine preset amounts - use pricing array if available, otherwise min/max
+  const presetAmounts = card.pricing.length > 0 
+    ? card.pricing 
+    : [
+        card.min_price || 20,
+        card.min_price ? Math.floor((card.min_price + (card.max_price || 100)) / 2) : 50,
+        card.max_price || 100
+      ].filter((v, i, a) => a.indexOf(v) === i); // Remove duplicates
 
   return (
-    <div className="bg-white py-7 px-4 md:px-14">
+    <div className="bg-white py-7 px-4 md:px-24">
+      <button 
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 mb-6 text-blue-600 hover:text-blue-800"
+      >
+        <FiArrowLeft /> Back to all gift cards
+      </button>
       <div className="flex flex-col md:flex-row items-start justify-between gap-12">
-        {/* Card Image */}
+        {/* Card Image Section */}
         <div className="w-full md:max-w-[50%] flex flex-col gap-8">
           <div className="bg-greylight p-12 md:p-24 flex items-center justify-center">
-            <img src="/ninetendo-lg.png" alt="" />
+            <img 
+              src={card.media[0]?.image || card.image || '/placeholder.jpg'}
+              alt={card.name}
+              className="max-h-80 object-contain"
+            />
           </div>
-          {/* Smaller images */}
+          
+          {/* Thumbnail images */}
           <div className="flex items-center gap-3 w-full">
-            <img
-              src="/ninetendo-lg-mini.png"
-              alt=""
-              className="w-full h-14 object-cover"
-            />
-            <img
-              src="/ninetendo-lg-mini.png"
-              alt=""
-              className="w-full h-14 object-cover"
-            />
-            <img
-              src="/ninetendo-lg-mini.png"
-              alt=""
-              className="w-full h-14 object-cover"
-            />
-            <img
-              src="/ninetendo-lg-mini.png"
-              alt=""
-              className="w-full h-14 object-cover"
-            />
+            {[1, 2, 3, 4].map((i) => (
+              <img
+                key={i}
+                src={card.media[0]?.image || card.image || '/placeholder.jpg'}
+                alt=""
+                className="w-full h-14 object-cover"
+              />
+            ))}
           </div>
         </div>
 
+        {/* Details Section */}
         <div className="w-full md:max-w-[50%]">
-          {/* Header */}
           <h1 className="text-2xl font-medium text-greynormal mb-4">
-            Nintendo Gift Card
+            {card.name}
           </h1>
 
           {/* Description Section */}
@@ -137,29 +211,26 @@ const GiftCardDetails = () => {
             >
               <h2 className="text-sm text-greynormal">Description</h2>
               <span className="text-gray-500">
-                {expandedSections.description ? <img src="/icons/arrow-up.png" alt="Up" /> : <img src="/icons/arrow-down.png" alt="Down" />}
+                {expandedSections.description ? 
+                  <img src="/icons/arrow-up.png" alt="Up" /> : 
+                  <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
 
             {expandedSections.description && (
               <div className="mt-3 text-grey">
-                <p className="mb-4">
-                  Unlock the possibilities on your Nintendo Switch with a
-                  Prepaid Nintendo eShop gift card. This versatile digital key
-                  serves as your entry point to the universe of Nintendo:
-                </p>
-                <ul className="list-disc pl-5 mb-4 space-y-2">
-                  <li>
-                    Games:Access a vast range of games from
-                    top franchises like Zelda, Mario Brothers, and Pokemon,
-                    along with blockbuster new releases.
-                  </li>
-                  <li>
-                    Demos and Trailers: Get a sneak peek into
-                    your future gaming adventures with numerous game demos and
-                    trailers available to view and try out.
-                  </li>
-                </ul>
+                {typeof card.description === 'string' ? (
+                  <p>{card.description}</p>
+                ) : (
+                  <div>
+                    {card.description?.content?.map((section: { title?: string; description: string }, index: number) => (
+                      <div key={index} className="mb-4">
+                        {section.title && <h3 className="font-semibold mb-2">{section.title}</h3>}
+                        <div dangerouslySetInnerHTML={{ __html: section.description }} />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </section>
@@ -193,42 +264,37 @@ const GiftCardDetails = () => {
                   Customize
                 </button>
 
+                {showCustomInput && (
                   <input
-                    id="custom-price"
                     type="number"
                     value={customAmount}
                     onChange={handleCustomAmountChange}
-                    placeholder="$5 - $1000 Max"
+                    placeholder={`$${card.min_price || 5} - $${card.max_price || 1000} Max`}
                     className="w-full py-2.5 px-3 border border-greylight bg-ninetendobggrey rounded-lg focus:border-red-500 focus:outline-none appearance-none [-moz-appearance:textfield]"
-                    min="1"
+                    min={card.min_price || 1}
+                    max={card.max_price || 1000}
                   />
+                )}
               </div>
-
             </div>
 
-            {/* {showCustomInput && (
-              <div className="mb-4">
-                <input
-                  type="number"
-                  value={customAmount}
-                  onChange={handleCustomAmountChange}
-                  placeholder="Enter custom amount"
-                  className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-red-500 focus:outline-none"
-                  min="1"
-                />
+            {cartMessage && (
+              <div className={`mb-4 text-sm ${
+                cartMessage.includes('success') ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {cartMessage}
               </div>
-            )} */}
+            )}
 
-              {/* Action Button */}
+            {/* Action Buttons */}
             <div className="flex flex-col md:flex-row gap-4 md:gap-2 mb-16 mt-14 bg-greylight md:bg-transparent p-4 md:p-0">
               <button
-              onClick={() => dispatch(addToCart({
-                id: giftCard.id,
-                name: giftCard.name,
-                price: giftCard.price,
-                image: giftCard.image
-              }))}
-              className="bg-greynormal hover:bg-red-700 text-white py-5 px-10 rounded-[6px] transition-colors">
+                onClick={handleAddToCart}
+                disabled={!selectedAmount && !customAmount}
+                className={`bg-greynormal hover:bg-red-700 text-white py-5 px-10 rounded-[6px] transition-colors ${
+                  (!selectedAmount && !customAmount) ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
                 Add to cart
               </button>
               <button
@@ -248,16 +314,16 @@ const GiftCardDetails = () => {
             >
               <h2 className="font-normal">How to Redeem</h2>
               <span className="text-gray-500">
-              {expandedSections.howToRedeem ? <img src="/icons/arrow-up.png" alt="Up" /> : <img src="/icons/arrow-down.png" alt="Down" /> }
+                {expandedSections.howToRedeem ? 
+                  <img src="/icons/arrow-up.png" alt="Up" /> : 
+                  <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
 
             {expandedSections.howToRedeem && (
               <div className="mt-3">
                 <ol className="list-decimal pl-5 space-y-2 text-grey">
-                  <li>
-                    Visit the Nintendo eShop on your Nintendo Switch console
-                  </li>
+                  <li>Visit the Nintendo eShop on your Nintendo Switch console</li>
                   <li>Select "Enter Code" from the menu</li>
                   <li>Enter the 16-digit code from your gift card</li>
                   <li>Confirm and enjoy your credit!</li>
@@ -274,7 +340,9 @@ const GiftCardDetails = () => {
             >
               <h2 className="font-normal">Terms and Conditions</h2>
               <span className="text-gray-500">
-              {expandedSections.terms ? <img src="/icons/arrow-up.png" alt="Up" /> : <img src="/icons/arrow-down.png" alt="Down" /> }
+                {expandedSections.terms ? 
+                  <img src="/icons/arrow-up.png" alt="Up" /> : 
+                  <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
 
@@ -298,50 +366,38 @@ const GiftCardDetails = () => {
             >
               <h2 className="font-normal">Reviews</h2>
               <span className="text-gray-500">
-              {expandedSections.reviews ? <img src="/icons/arrow-up.png" alt="Up" /> : <img src="/icons/arrow-down.png" alt="Down" />}
+                {expandedSections.reviews ? 
+                  <img src="/icons/arrow-up.png" alt="Up" /> : 
+                  <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
 
             {expandedSections.reviews && (
               <div className="space-y-6 mt-3">
-              {reviews.map((review) => (
-                <div key={review.id} className="border-b border-gray-100 pb-6 last:border-0">
-                  <div className="flex items-start gap-2 mb-2">
-                    <div className="h-12 w-12 bg-greylight rounded-full flex items-center justify-center"> <img src="" alt="" /><FaUser className="text-lg"/></div>
-                    <div className="">
-                      <h3 className="font-normal text-sm translate-y-1">{review.author}</h3>
-                      <span className="text-xs text-gray-500">
-                        {formatDate(review.date)}
-                      </span>
+                {reviews.map((review) => (
+                  <div key={review.id} className="border-b border-gray-100 pb-6 last:border-0">
+                    <div className="flex items-start gap-2 mb-2">
+                      <div className="h-12 w-12 bg-greylight rounded-full flex items-center justify-center">
+                        <FaUser className="text-lg"/>
+                      </div>
+                      <div className="">
+                        <h3 className="font-normal text-sm translate-y-1">{review.author}</h3>
+                        <span className="text-xs text-gray-500">
+                          {formatDate(review.date)}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Rating stars - optional */}
-                  <div>
-                    <img src="/icons/rate.png" alt="Rate" />
-                  </div>
-                  
-                  {/* {review.rating && (
-                    <div className="flex mb-3">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          className={`w-5 h-5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
+                    
+                    <div>
+                      <img src="/icons/rate.png" alt="Rate" />
                     </div>
-                  )} */}
-                  
-                  <p className="text-gray-500 text-xs whitespace-pre-line mt-2">
-                    {review.content}
-                  </p>
-                </div>
-              ))}
-            </div>
+                    
+                    <p className="text-gray-500 text-xs whitespace-pre-line mt-2">
+                      {review.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
             )}
           </section>
 
@@ -354,30 +410,27 @@ const GiftCardDetails = () => {
               Unlock the possibilities on your Nintendo Switch with a Prepaid
               Nintendo eShop gift card.
             </p>
-            <button className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+            <button 
+              onClick={handleAddToCart}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+            >
               Buy Now
             </button>
           </div>
-
-          {/* Buy as Gift Modal */}
-          <BuyAsGiftModal
-            isOpen={showGiftModal}
-            onClose={() => setShowGiftModal(false)}
-            giftCard={giftCard}
-          />          
         </div>
 
-        {/* Mobile Add to Cart History or Checkout */}
-        {isAuthenticated && itemCount > 0 && ( 
-          <div className="fixed bottom-4 left-4 right-4 md:hidden max-w-full bg-white p-[16px] shadow-xl border border-greylight rounded-[8px]">
-          <button
-            className="bg-greynormal rounded-[6px] py-[12px] px-[16px] text-white text-xs w-full"
-             title="Checkout, Items Selected and Total Amount">
-            {itemCount} Item added<span className="font-semibold"> ${total.toFixed(2)} </span> Checkout!
-          </button>
-          </div>
-        )}
-        
+        {/* Buy as Gift Modal */}
+        <BuyAsGiftModal
+          isOpen={showGiftModal}
+          onClose={() => setShowGiftModal(false)}
+          giftCard={{
+            ...card,
+            description: typeof card.description === 'string' 
+              ? card.description 
+              : card.description?.content.map(section => section.description).join(' ') || ''
+          }}
+          selectedAmount={selectedAmount || (customAmount && !isNaN(parseFloat(customAmount)) ? parseFloat(customAmount) : null)}
+        />          
       </div>
     </div>
   );

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
-import { GiftCard } from "../../context/giftcard/Type";
+import { GiftCardItem  } from "../../context/giftcard/Type";
 
 interface GiftCardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  giftCard: GiftCard;
+  giftCard: GiftCardItem;
+  selectedAmount: number | null;
 }
 
 const BuyAsGiftModal: React.FC<GiftCardModalProps> = ({ isOpen, onClose, giftCard}) => {
@@ -28,7 +29,7 @@ const BuyAsGiftModal: React.FC<GiftCardModalProps> = ({ isOpen, onClose, giftCar
         senderName,
         message,
         sendDate,
-        giftCardId: giftCard.id,
+        giftCardId: giftCard._id,
       });
 
       alert("Gift sent successfully!");
