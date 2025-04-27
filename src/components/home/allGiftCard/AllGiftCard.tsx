@@ -12,6 +12,8 @@ interface ApiResponse {
   data: GiftCardItem[];
 }
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 const AllGiftCard = () => {
   const [giftCards, setGiftCards] = useState<GiftCardItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +21,6 @@ const AllGiftCard = () => {
 
   useEffect(() => {
     const fetchGiftCards = async () => {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL;
       setLoading(true);
       setError("");
 
