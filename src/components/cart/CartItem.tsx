@@ -4,11 +4,11 @@ import { FiTrash2 } from "react-icons/fi";
 
 interface CartItemProps {
   item: {
-    id: number;
-    name: string;
+    giftCardId: string;
     price: number;
     quantity: number;
-    image: string;
+    name?: string;
+    image?: string;
   };
   onIncrease: () => void;
   onDecrease: () => void;

@@ -1,18 +1,17 @@
 import { GoPlusCircle } from "react-icons/go";
 import { RxMinusCircled } from "react-icons/rx";
-import { useDispatch } from "react-redux";
-import { updateQuantity} from "../../../../../store/cartSlice";
+import { useCartContext } from "../../../../../context/cart/CartContext";
 
 interface CartItem {
-  id: number;
-  image?: string;
-  name: string;
+  giftCardId: string;
   price: number;
   quantity: number;
+  name?: string;
+  image?: string;
 }
 
-const CartCard: React.FC<{ item: CartItem }> = ({ item }) => {
-  const dispatch = useDispatch();
+const CartCard: React.FC<{ item: CartItem }> = () => {
+  const {cart, incrementQuantity, decrementQuantity} = useCartContext();
 
   return (
     <div>
@@ -22,12 +21,12 @@ const CartCard: React.FC<{ item: CartItem }> = ({ item }) => {
             <div className="flex gap-1">
               {/* Product image */}
               <div className="w-20 h-10">
-                <img src={item.image} alt={item.name} className="object-contain" />
+                <img src={cart.items[0].image} alt={cart.items[0].name} className="object-contain" />
               </div>
               {/* Product Name and Price */}
               <div className="flex flex-col items-start gap-1">
-                <span>{item.name}</span>
-                <span className="text-greylightactive">${item.price.toFixed(2)}</span>
+                <span>{cart.items[0].name}</span>
+                <span className="text-greylightactive">${cart.items[0].price.toFixed(2)}</span>
               </div>
             </div>
 
@@ -36,17 +35,17 @@ const CartCard: React.FC<{ item: CartItem }> = ({ item }) => {
               <button 
                 type="button" 
                 title="Decrease quantity"
-                onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity - 1 }))}
+                onClick={() => decrementQuantity(cart.items[0].giftCardId)}
               >
                 <RxMinusCircled className="text-2xl" />
               </button>
               <span className="w-[46px] h-[41px] p-[10px] rounded-[8px] bg-greylight text-center">
-                {item.quantity}
+                {cart.items[0].quantity}
               </span>
               <button 
                 type="button" 
                 title="Increase quantity"
-                onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }))}
+                onClick={() => incrementQuantity(cart.items[0].giftCardId)}
               >
                 <GoPlusCircle className="text-2xl" />
               </button>

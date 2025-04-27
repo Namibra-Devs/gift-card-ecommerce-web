@@ -5,6 +5,7 @@ import { FaUser } from "react-icons/fa6";
 import { FiArrowLeft } from "react-icons/fi";
 import BuyAsGiftModal from "./BuyAsGiftModal";
 import { useAuth } from "../../context/useAuth";
+import { useCartContext } from '../../context/cart/CartContext';
 
 interface GiftCardDetails {
   _id: string;
@@ -19,7 +20,10 @@ interface GiftCardDetails {
   max_price?: number;
 }
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 const GiftCardDetails = () => {
+  const { addToCart} = useCartContext();
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -46,8 +50,11 @@ const GiftCardDetails = () => {
   useEffect(() => {
     const fetchGiftCardDetails = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL;
-        const response = await axios.get(`${apiUrl}/gift-cards/${id}`);
+        const response = await axios.get(`${apiUrl}/gift-cards/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         
         if (response.data.success) {
           setCard(response.data.data);
@@ -104,18 +111,24 @@ const GiftCardDetails = () => {
 
     try {
       const apiUrl = import.meta.env.VITE_API_BASE_URL;
-      const token = localStorage.getItem('token');
       
+      if (!card) {
+        setCartMessage('Gift card details are not available.');
+        return;
+      }
+
       const response = await axios.post(
         `${apiUrl}/cart`,
-        {
-          giftCardId: card?._id,
-          amount: amount,
-          quantity: 1
-        },
+          addToCart({
+            giftCardId: card._id,
+            price: selectedAmount || parseFloat(customAmount),
+            quantity: 1,
+            name: card.name,
+            image: card.image
+          }),
         {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }
       );
@@ -125,9 +138,11 @@ const GiftCardDetails = () => {
         setTimeout(() => setCartMessage(''), 3000);
       } else {
         setCartMessage(response.data.message || 'Failed to add to cart');
+        setTimeout(() => setCartMessage(''), 3000);
       }
     } catch (err) {
       setCartMessage('Failed to add to cart. Please try again.');
+      setTimeout(() => setCartMessage(''), 3000);
       console.error(err);
     }
   };
@@ -145,7 +160,7 @@ const GiftCardDetails = () => {
   const reviews = [
     {
       id: 1,
-      author: "Paul Amegah",
+      author: "Tyler Gobka Bright",
       date: new Date(2024, 9, 10),
       content: "Perfect Gift for Gamers - Instant Fun and Flexibility! Unleash the possibilities in your Nintendo Switch with PrepaidBanc Nintendo eShop gift card. This versatile",
       rating: 5
@@ -266,11 +281,12 @@ const GiftCardDetails = () => {
 
                 {showCustomInput && (
                   <input
+                    id="custom-price"
                     type="number"
                     value={customAmount}
                     onChange={handleCustomAmountChange}
                     placeholder={`$${card.min_price || 5} - $${card.max_price || 1000} Max`}
-                    className="w-full py-2.5 px-3 border border-greylight bg-ninetendobggrey rounded-lg focus:border-red-500 focus:outline-none appearance-none [-moz-appearance:textfield]"
+                    className="min-w-44 py-2.5 px-3 border-2 border-greylight bg-ninetendobggrey rounded-lg focus:border-red-500 focus:outline-none appearance-none [-moz-appearance:textfield]"
                     min={card.min_price || 1}
                     max={card.max_price || 1000}
                   />
