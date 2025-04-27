@@ -5,6 +5,7 @@ import { FaUser } from "react-icons/fa6";
 import { FiArrowLeft } from "react-icons/fi";
 import BuyAsGiftModal from "./BuyAsGiftModal";
 import { useAuth } from "../../context/useAuth";
+import { useCartContext } from '../../context/cart/CartContext';
 
 interface GiftCardDetails {
   _id: string;
@@ -22,6 +23,7 @@ interface GiftCardDetails {
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const GiftCardDetails = () => {
+  const { addToCart} = useCartContext();
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -48,7 +50,11 @@ const GiftCardDetails = () => {
   useEffect(() => {
     const fetchGiftCardDetails = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/gift-cards/${id}`);
+        const response = await axios.get(`${apiUrl}/gift-cards/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         
         if (response.data.success) {
           setCard(response.data.data);
@@ -105,18 +111,24 @@ const GiftCardDetails = () => {
 
     try {
       const apiUrl = import.meta.env.VITE_API_BASE_URL;
-      const token = localStorage.getItem('token');
       
+      if (!card) {
+        setCartMessage('Gift card details are not available.');
+        return;
+      }
+
       const response = await axios.post(
         `${apiUrl}/cart`,
-        {
-          giftCardId: card?._id,
-          price: amount,
-          quantity: 1
-        },
+          addToCart({
+            giftCardId: card._id,
+            price: selectedAmount || parseFloat(customAmount),
+            quantity: 1,
+            name: card.name,
+            image: card.image
+          }),
         {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }
       );

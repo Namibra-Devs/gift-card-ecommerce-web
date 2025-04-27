@@ -1,18 +1,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../../../../context/useAuth";
+import { useCartContext } from "../../../../../context/cart/CartContext";
 import CartCard from "./CartCard";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../../store/store";
-import { CartState } from "../../../../../store/store";
+
 // import { current } from "@reduxjs/toolkit";
 const Cart = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const { isAuthenticated } = useAuth();
+  // Get cart data
+  const {cart} = useCartContext();
   
-  // Get cart data from Redux store
-  const { items, itemCount, total } = useSelector((state: RootState) => state.cart as CartState);
 
   return (
     <>
@@ -31,9 +30,9 @@ const Cart = () => {
           <span className="text-greynormal">Cart</span>
         </div>
         
-        {isAuthenticated && itemCount > 0 && (
+        {isAuthenticated && cart.count > 0 && (
           <span className="absolute -top-2.5 left-2.5 bg-rednormal flex items-center justify-center text-white text-xs w-5 h-5 rounded-full">
-            {itemCount}
+            {cart.count}
           </span>
         )}
 
@@ -45,15 +44,15 @@ const Cart = () => {
               animate={{ opacity: 1, y: 0 }}
               className="absolute -right-16 top-2 w-[465px] p-[10px] shadow-sm bg-white border border-greylight rounded-[8px]"
             >
-              {items.length > 0 ? (
+              {cart?.items?.length > 0 ? (
                 <>
-                  {items.map((item) => (
-                    <CartCard key={item.id} item={item} />
+                  {cart.items.map((item) => (
+                    <CartCard key={item.giftCardId} item={item} />
                   ))}
                   <div>
                     <div className="flex items-center my-4 py-[18px] px-[16px]">
                       <span className="text-greynormal">Total Cart</span>
-                      <span className="text-greynormal ml-auto">${total.toFixed(2)}</span>
+                      <span className="text-greynormal ml-auto">${cart.total?.toFixed(2)}</span>
                     </div>
                     <Link to="/cart">
                       <button className="mt-2 w-full bg-greynormal text-white py-[10px] px-[16px] rounded-[8px]">
