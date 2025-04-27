@@ -19,6 +19,8 @@ interface GiftCardDetails {
   max_price?: number;
 }
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 const GiftCardDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -46,7 +48,6 @@ const GiftCardDetails = () => {
   useEffect(() => {
     const fetchGiftCardDetails = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_BASE_URL;
         const response = await axios.get(`${apiUrl}/gift-cards/${id}`);
         
         if (response.data.success) {
@@ -110,7 +111,7 @@ const GiftCardDetails = () => {
         `${apiUrl}/cart`,
         {
           giftCardId: card?._id,
-          amount: amount,
+          price: amount,
           quantity: 1
         },
         {
@@ -125,9 +126,11 @@ const GiftCardDetails = () => {
         setTimeout(() => setCartMessage(''), 3000);
       } else {
         setCartMessage(response.data.message || 'Failed to add to cart');
+        setTimeout(() => setCartMessage(''), 3000);
       }
     } catch (err) {
       setCartMessage('Failed to add to cart. Please try again.');
+      setTimeout(() => setCartMessage(''), 3000);
       console.error(err);
     }
   };
@@ -145,7 +148,7 @@ const GiftCardDetails = () => {
   const reviews = [
     {
       id: 1,
-      author: "Paul Amegah",
+      author: "Tyler Gobka Bright",
       date: new Date(2024, 9, 10),
       content: "Perfect Gift for Gamers - Instant Fun and Flexibility! Unleash the possibilities in your Nintendo Switch with PrepaidBanc Nintendo eShop gift card. This versatile",
       rating: 5
@@ -266,11 +269,12 @@ const GiftCardDetails = () => {
 
                 {showCustomInput && (
                   <input
+                    id="custom-price"
                     type="number"
                     value={customAmount}
                     onChange={handleCustomAmountChange}
                     placeholder={`$${card.min_price || 5} - $${card.max_price || 1000} Max`}
-                    className="w-full py-2.5 px-3 border border-greylight bg-ninetendobggrey rounded-lg focus:border-red-500 focus:outline-none appearance-none [-moz-appearance:textfield]"
+                    className="min-w-44 py-2.5 px-3 border-2 border-greylight bg-ninetendobggrey rounded-lg focus:border-red-500 focus:outline-none appearance-none [-moz-appearance:textfield]"
                     min={card.min_price || 1}
                     max={card.max_price || 1000}
                   />
