@@ -1,7 +1,10 @@
+import AccountContent from "../../components/account/AccountContent"
 
 const Account = () => {
   return (
-    <div>Account</div>
+    <>
+      <AccountContent/>
+    </>
   )
 }
 

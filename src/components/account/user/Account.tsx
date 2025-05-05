@@ -8,7 +8,7 @@ import NotificationModal from "./modals/NotificationModal";
 import EmailOtpVerificationModal from "./modals/EmailOtpVerificationModal";
 import { VerifyResponse } from "../../../context/authTypes";
 
-type UserField = "phone" | "firstName" | "lastName" | "email" | "username";
+type UserField = "phone" | "firstName" | "lastName" | "email" | "userName";
 
 const Account = () => {
   const { user, loading } = UseAuthProfile();
@@ -16,7 +16,7 @@ const Account = () => {
     phone: user?.phone || "+233 02444444444",
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
-    username: user?.username || "username",
+    userName: user?.userName || "username",
     email: user?.email || "example@example.com",
     secondaryEmail: user?.secondaryEmail || "secondaryEmail@new.com",
   });
@@ -32,10 +32,7 @@ const Account = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const userId = localStorage.getItem("userId");
 
-  const [notification, setNotification] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
+  const [notification, setNotification] = useState<{type: "success" | "error"; message: string;} | null>(null);
   const [emailLinkModal, setEmailLinkModal] = useState(false);
   const [emailToLink, setEmailToLink] = useState("");
 
@@ -47,13 +44,13 @@ const Account = () => {
   const handleEdit = (field: UserField) => {
     setEditField(field);
     if (field === "phone") {
-      // Split existing phone number into country code and number
-      const [code, ...numberParts] = userData.phone.split(" ");
-      const number = numberParts.join(" ");
-      const country = countries.find((c) => c.code === code) || countries[0];
+      // // Split existing phone number into country code and number
+      // const [code, ...numberParts] = userData.phone.split(" ");
+      // const number = numberParts.join(" ");
+      const country = countries.find((c) => c.code === "+233") || countries[0];
       setSelectedCountry(country);
-      setPhoneNumber(number);
-      setInputValue(number);
+      setPhoneNumber(userData.phone);
+      setInputValue(userData.phone);
     } else {
       setInputValue(userData[field]);
     }
@@ -88,6 +85,7 @@ const Account = () => {
         "success",
         `${editField.replace(/([A-Z])/g, " $1")} updated successfully`
       );
+    window.location.reload();
     } catch (error) {
       console.error("Update failed:", error);
       showNotification("error", `Failed to update ${editField}`);
@@ -174,7 +172,7 @@ const Account = () => {
       <h2 className="mb-4">Profile</h2>
       <div className="bg-white md:bg-greylight min-w-fit px-6 py-3 rounded-[16px]">
         {(
-          ["firstName", "lastName", "username", "email", "phone"] as UserField[]
+          ["firstName", "lastName", "userName", "email", "phone"] as UserField[]
         ).map((field) => (
           <div key={field} className="flex items-center justify-between py-3">
             <span className="capitalize font-medium text-grey md:text-greynormal">

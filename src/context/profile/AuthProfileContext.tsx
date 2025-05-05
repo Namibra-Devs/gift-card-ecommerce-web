@@ -6,7 +6,7 @@ interface UserProfile {
   userId: string;
   firstName: string;
   lastName: string;
-  username?: string;
+  userName?: string;
   phone: string;
   email: string;
   secondaryEmail: string;

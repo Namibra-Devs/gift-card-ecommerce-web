@@ -6,23 +6,22 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import RecoverPassword from "./pages/auth/RecoverPassword";
 import UpdatePassword from "./pages/auth/UpdatePassword";
-import AccountMain from "./components/account/AccountMain";
 import { useAuth } from "./context/useAuth";
 import GiftCardDetailsPage from "./pages/auth/GiftCardDetailsPage";
 import CartPage from "./pages/auth/CartPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Footer from './components/footer/Footer';
 import Navbar from './components/navbar/Navbar';
+import PageNotFoundPage from './pages/PageNotFoundPage';
+import Account from './pages/auth/Account';
 
 const App: React.FC = () => {
   const { isAuthenticated, logoutSignInMessage } = useAuth();
-  const hideFooterRoutes = ["/login", "/register"];
-  const hideNavbarRoutes = ["/login", "/register"];
+  const hideFooterRoutes = ["/login", "/register", "*"];
+  const hideNavbarRoutes = ["/login", "/register", "*"];
 
   return (
     <Router>
-      
-
        <div className="flex items-center justify-center">
        {logoutSignInMessage && (
           <span
@@ -36,19 +35,19 @@ const App: React.FC = () => {
           {/* Conditionally render Footer */}
           {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
 
-          <Routes>
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
       
             <Route element={<ProtectedRoute />}>
-              <Route path="/account" element={isAuthenticated ? <AccountMain /> : <Navigate to="/login"/>}/>
+              <Route path="/account" element={isAuthenticated ? <Account/> : <Navigate to="/login"/>}/>
               <Route path="/recover-password" element={isAuthenticated ? <RecoverPassword /> : <Navigate to="/login"/>} />
               <Route path="/update-password" element={isAuthenticated ? <UpdatePassword /> : <Navigate to="/login"/>} />
               <Route path="/cart" element={isAuthenticated ? <CartPage /> : <Navigate to="/login"/>} />
               <Route path="/gift-cards/:id" element={isAuthenticated ? <GiftCardDetailsPage /> : <Navigate to="/login"/>} />
             </Route>
-            {/* <Route path="*" element={<PageNotFound />} /> */}
+            <Route path="*" element={<PageNotFoundPage />} />
           </Routes>
           {/* Conditionally render Footer */}
           {!hideFooterRoutes.includes(location.pathname) && <Footer />}
