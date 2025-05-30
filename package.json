@@ -30,6 +30,7 @@
     "redux": "^5.0.1",
     "tailwind-scrollbar-hide": "^2.0.0",
     "typescript-eslint": "^8.29.1",
+    "util-deprecate": "^1.0.2",
     "web-vitals": "^4.2.4"
   },
   "devDependencies": {

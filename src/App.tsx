@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import RecoverPassword from "./pages/auth/RecoverPassword";
 import UpdatePassword from "./pages/auth/UpdatePassword";
 import AccountMain from "./components/account/AccountMain";
+import Dashboard from "./pages/Dashboard";
 import { useAuth } from "./context/useAuth";
 import GiftCardDetailsPage from "./pages/auth/GiftCardDetailsPage";
 import CartPage from "./pages/auth/CartPage";
@@ -21,7 +22,7 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      
+
 
        <div className="flex items-center justify-center">
        {logoutSignInMessage && (
@@ -31,7 +32,7 @@ const App: React.FC = () => {
           </span>
         )}
        </div>
-        
+
         <>
           {/* Conditionally render Footer */}
           {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
@@ -40,9 +41,10 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-      
+
             <Route element={<ProtectedRoute />}>
               <Route path="/account" element={isAuthenticated ? <AccountMain /> : <Navigate to="/login"/>}/>
+              <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login"/>}/>
               <Route path="/recover-password" element={isAuthenticated ? <RecoverPassword /> : <Navigate to="/login"/>} />
               <Route path="/update-password" element={isAuthenticated ? <UpdatePassword /> : <Navigate to="/login"/>} />
               <Route path="/cart" element={isAuthenticated ? <CartPage /> : <Navigate to="/login"/>} />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from "axios";
+import ApiService from "../../services/apiService";
 import { FaUser } from "react-icons/fa6";
 import { FiArrowLeft } from "react-icons/fi";
 import BuyAsGiftModal from "./BuyAsGiftModal";
@@ -20,7 +20,7 @@ interface GiftCardDetails {
   max_price?: number;
 }
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 const GiftCardDetails = () => {
   const { addToCart} = useCartContext();
@@ -50,16 +50,18 @@ const GiftCardDetails = () => {
   useEffect(() => {
     const fetchGiftCardDetails = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/gift-cards/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        
-        if (response.data.success) {
-          setCard(response.data.data);
+        if (!id) {
+          setError('Gift card ID not provided');
+          setLoading(false);
+          return;
+        }
+
+        const response = await ApiService.getGiftCardById(id);
+
+        if (response.success && response.data) {
+          setCard(response.data);
         } else {
-          setError('Gift card not found');
+          setError(response.message || 'Gift card not found');
         }
       } catch (err) {
         setError('Failed to load gift card details');
@@ -109,37 +111,20 @@ const GiftCardDetails = () => {
       return;
     }
 
+    if (!card) {
+      setCartMessage('Gift card details are not available.');
+      return;
+    }
+
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL;
-      
-      if (!card) {
-        setCartMessage('Gift card details are not available.');
-        return;
-      }
+      await addToCart({
+        giftCardId: card._id,
+        price: amount,
+        quantity: 1,
+      });
 
-      const response = await axios.post(
-        `${apiUrl}/cart`,
-          addToCart({
-            giftCardId: card._id,
-            price: selectedAmount || parseFloat(customAmount),
-            quantity: 1,
-            name: card.name,
-            image: card.image
-          }),
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-
-      if (response.data.success) {
-        setCartMessage('Added to cart successfully!');
-        setTimeout(() => setCartMessage(''), 3000);
-      } else {
-        setCartMessage(response.data.message || 'Failed to add to cart');
-        setTimeout(() => setCartMessage(''), 3000);
-      }
+      setCartMessage('Added to cart successfully!');
+      setTimeout(() => setCartMessage(''), 3000);
     } catch (err) {
       setCartMessage('Failed to add to cart. Please try again.');
       setTimeout(() => setCartMessage(''), 3000);
@@ -172,8 +157,8 @@ const GiftCardDetails = () => {
   if (!card) return null;
 
   // Determine preset amounts - use pricing array if available, otherwise min/max
-  const presetAmounts = card.pricing.length > 0 
-    ? card.pricing 
+  const presetAmounts = card.pricing.length > 0
+    ? card.pricing
     : [
         card.min_price || 20,
         card.min_price ? Math.floor((card.min_price + (card.max_price || 100)) / 2) : 50,
@@ -182,7 +167,7 @@ const GiftCardDetails = () => {
 
   return (
     <div className="bg-white py-7 px-4 md:px-24">
-      <button 
+      <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-2 mb-6 text-blue-600 hover:text-blue-800"
       >
@@ -192,13 +177,13 @@ const GiftCardDetails = () => {
         {/* Card Image Section */}
         <div className="w-full md:max-w-[50%] flex flex-col gap-8">
           <div className="bg-greylight p-12 md:p-24 flex items-center justify-center">
-            <img 
+            <img
               src={card.media[0]?.image || card.image || '/placeholder.jpg'}
               alt={card.name}
               className="max-h-80 object-contain"
             />
           </div>
-          
+
           {/* Thumbnail images */}
           <div className="flex items-center gap-3 w-full">
             {[1, 2, 3, 4].map((i) => (
@@ -226,8 +211,8 @@ const GiftCardDetails = () => {
             >
               <h2 className="text-sm text-greynormal">Description</h2>
               <span className="text-gray-500">
-                {expandedSections.description ? 
-                  <img src="/icons/arrow-up.png" alt="Up" /> : 
+                {expandedSections.description ?
+                  <img src="/icons/arrow-up.png" alt="Up" /> :
                   <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
@@ -330,8 +315,8 @@ const GiftCardDetails = () => {
             >
               <h2 className="font-normal">How to Redeem</h2>
               <span className="text-gray-500">
-                {expandedSections.howToRedeem ? 
-                  <img src="/icons/arrow-up.png" alt="Up" /> : 
+                {expandedSections.howToRedeem ?
+                  <img src="/icons/arrow-up.png" alt="Up" /> :
                   <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
@@ -356,8 +341,8 @@ const GiftCardDetails = () => {
             >
               <h2 className="font-normal">Terms and Conditions</h2>
               <span className="text-gray-500">
-                {expandedSections.terms ? 
-                  <img src="/icons/arrow-up.png" alt="Up" /> : 
+                {expandedSections.terms ?
+                  <img src="/icons/arrow-up.png" alt="Up" /> :
                   <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
@@ -382,8 +367,8 @@ const GiftCardDetails = () => {
             >
               <h2 className="font-normal">Reviews</h2>
               <span className="text-gray-500">
-                {expandedSections.reviews ? 
-                  <img src="/icons/arrow-up.png" alt="Up" /> : 
+                {expandedSections.reviews ?
+                  <img src="/icons/arrow-up.png" alt="Up" /> :
                   <img src="/icons/arrow-down.png" alt="Down" />}
               </span>
             </button>
@@ -403,11 +388,11 @@ const GiftCardDetails = () => {
                         </span>
                       </div>
                     </div>
-                    
+
                     <div>
                       <img src="/icons/rate.png" alt="Rate" />
                     </div>
-                    
+
                     <p className="text-gray-500 text-xs whitespace-pre-line mt-2">
                       {review.content}
                     </p>
@@ -426,7 +411,7 @@ const GiftCardDetails = () => {
               Unlock the possibilities on your Nintendo Switch with a Prepaid
               Nintendo eShop gift card.
             </p>
-            <button 
+            <button
               onClick={handleAddToCart}
               className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-colors"
             >
@@ -441,12 +426,12 @@ const GiftCardDetails = () => {
           onClose={() => setShowGiftModal(false)}
           giftCard={{
             ...card,
-            description: typeof card.description === 'string' 
-              ? card.description 
+            description: typeof card.description === 'string'
+              ? card.description
               : card.description?.content.map(section => section.description).join(' ') || ''
           }}
           selectedAmount={selectedAmount || (customAmount && !isNaN(parseFloat(customAmount)) ? parseFloat(customAmount) : null)}
-        />          
+        />
       </div>
     </div>
   );
