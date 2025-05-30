@@ -34,9 +34,12 @@ const useCart = () => {
     }
   };
 
-  // Fetch cart on initial load
+  // Fetch cart on initial load only if user is authenticated
   useEffect(() => {
-    fetchCart();
+    const isAuthenticated = !!localStorage.getItem('token'); // or use your auth logic
+    if (isAuthenticated) {
+      fetchCart();
+    }
   }, []);
 
   const addToCart = async (item: {
