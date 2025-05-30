@@ -1,20 +1,8 @@
 // src/hooks/useCart.ts
 import { useState, useEffect } from "react";
-import GiftCardService from "../services/giftCardService";
+import GiftCartService from "../services/cartService";
+import { CartState } from "../types/cart";
 
-interface CartState {
-  items: Array<{
-    giftCardId: string;
-    price: number;
-    quantity: number;
-    name?: string;
-    image?: string;
-  }>;
-  total: number;
-  count: number;
-  loading: boolean;
-  error: string | null;
-}
 
 const useCart = () => {
   const [cart, setCart] = useState<CartState>({
@@ -25,15 +13,10 @@ const useCart = () => {
     error: null
   });
 
-  // Fetch cart on initial load
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
   const fetchCart = async () => {
     setCart(prev => ({ ...prev, loading: true, error: null }));
     try {
-      const { items, total, count } = await GiftCardService.getCart();
+      const { items, total, count } = await GiftCartService.getCart();
       setCart({
         items,
         total,
@@ -42,7 +25,7 @@ const useCart = () => {
         error: null
       });
     } catch (error) {
-        console.log(error);
+      console.log(error);
       setCart(prev => ({
         ...prev,
         loading: false,
@@ -50,6 +33,11 @@ const useCart = () => {
       }));
     }
   };
+
+  // Fetch cart on initial load
+  useEffect(() => {
+    fetchCart();
+  }, []);
 
   const addToCart = async (item: {
     giftCardId: string;
@@ -60,7 +48,7 @@ const useCart = () => {
   }) => {
     setCart(prev => ({ ...prev, loading: true }));
     try {
-      await GiftCardService.addToCart(item);
+      await GiftCartService.addToCart(item);
       await fetchCart(); // Refresh cart
     } catch (error) {
         console.log(error);
@@ -75,7 +63,7 @@ const useCart = () => {
   const removeFromCart = async (giftCardId: string) => {
     setCart(prev => ({ ...prev, loading: true }));
     try {
-      await GiftCardService.removeFromCart(giftCardId);
+      await GiftCartService.removeFromCart(giftCardId);
       await fetchCart(); // Refresh cart
     } catch (error) {
         console.log(error);
@@ -90,7 +78,7 @@ const useCart = () => {
   const clearCart = async () => {
     setCart(prev => ({ ...prev, loading: true }));
     try {
-      await GiftCardService.clearCart();
+      await GiftCartService.clearCart();
       await fetchCart(); // Refresh cart
     } catch (error) {
         console.log(error);
@@ -108,7 +96,7 @@ const useCart = () => {
   ) => {
     setCart(prev => ({ ...prev, loading: true }));
     try {
-      await GiftCardService.updateCartItem(giftCardId, updates);
+      await GiftCartService.updateCartItem(giftCardId, updates);
       await fetchCart(); // Refresh cart
     } catch (error) {
       console.log(error);
@@ -124,7 +112,7 @@ const useCart = () => {
   const incrementQuantity = async (giftCardId: string) => {
     setCart(prev => ({ ...prev, loading: true }));
     try {
-      await GiftCardService.updateCartItem(giftCardId, { operation: 'increment' });
+      await GiftCartService.updateCartItem(giftCardId, { operation: 'increment' });
       await fetchCart();
     } catch (error) {
         console.log(error);
@@ -139,7 +127,7 @@ const useCart = () => {
   const decrementQuantity = async (giftCardId: string) => {
     setCart(prev => ({ ...prev, loading: true }));
     try {
-      await GiftCardService.updateCartItem(giftCardId, { operation: 'decrement' });
+      await GiftCartService.updateCartItem(giftCardId, { operation: 'decrement' });
       await fetchCart();
     } catch (error) {
         console.log(error);

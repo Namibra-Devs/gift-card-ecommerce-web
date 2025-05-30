@@ -1,4 +1,4 @@
-import ForgotPassword from "../../components/account/recoverPassword/ForgotPassword";
+import ForgotPassword from "../../components/auth/account/recoverPassword/ForgotPassword";
 
 const RecoverPassword = () => {
   return (

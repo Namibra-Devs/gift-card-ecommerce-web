@@ -1,15 +1,13 @@
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import SearchContent from "./SearchContent";
-import { GiftCardItem } from "../../../../context/Type";
-import axios from "axios";
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { GiftCard } from "../../../../types/giftCard";
+import api from '../../../../services/api';
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<GiftCardItem[]>([]);
+  const [results, setResults] = useState<GiftCard[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
 
   // Fetch search results from API (Debounced)
@@ -24,7 +22,7 @@ const Search = () => {
     setIsDropdownOpen(true);
 
     try {
-      const response = await axios.get(`${apiUrl}/gift-cards/?query=${query}`);
+      const response = await api.get(`/gift-cards/?query=${query}`);
       setResults(response.data.data || response.data);
     } catch (error) {
       console.error("Error fetching search results", error);

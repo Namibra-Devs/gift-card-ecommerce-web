@@ -44,9 +44,9 @@ const Cart = () => {
               animate={{ opacity: 1, y: 0 }}
               className="absolute -right-16 top-2 w-[465px] p-[10px] shadow-sm bg-white border border-greylight rounded-[8px]"
             >
-              {cart?.items?.length > 0 ? (
+              {(cart.items?.length ?? 0) > 0 ? (
                 <>
-                  {cart.items.map((item) => (
+                  {(cart.items ?? []).map((item) => (
                     <CartCard key={item.giftCardId} item={item} />
                   ))}
                   <div>
