@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 import RecoverPassword from "./pages/auth/RecoverPassword";
 import UpdatePassword from "./pages/auth/UpdatePassword";
 import AccountMain from "./components/account/AccountMain";
@@ -14,11 +14,13 @@ import CartPage from "./pages/auth/CartPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Footer from './components/footer/Footer';
 import Navbar from './components/navbar/Navbar';
+import PageNotFoundPage from './pages/PageNotFoundPage';
+import Account from './pages/auth/Account';
 
 const App: React.FC = () => {
-  const { isAuthenticated, logoutSignInMessage } = useAuth();
-  const hideFooterRoutes = ["/login", "/register"];
-  const hideNavbarRoutes = ["/login", "/register"];
+  const { isAuthenticated } = useAuth();
+  const hideFooterRoutes = ["/login", "/register", "*"];
+  const hideNavbarRoutes = ["/login", "/register", "*"];
 
   return (
     <Router>
@@ -37,7 +39,7 @@ const App: React.FC = () => {
           {/* Conditionally render Footer */}
           {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
 
-          <Routes>
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -50,7 +52,7 @@ const App: React.FC = () => {
               <Route path="/cart" element={isAuthenticated ? <CartPage /> : <Navigate to="/login"/>} />
               <Route path="/gift-cards/:id" element={isAuthenticated ? <GiftCardDetailsPage /> : <Navigate to="/login"/>} />
             </Route>
-            {/* <Route path="*" element={<PageNotFound />} /> */}
+            <Route path="*" element={<PageNotFoundPage />} />
           </Routes>
           {/* Conditionally render Footer */}
           {!hideFooterRoutes.includes(location.pathname) && <Footer />}

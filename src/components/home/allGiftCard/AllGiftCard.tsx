@@ -4,18 +4,12 @@ import GiftCard from "./GiftCard";
 import { FiLoader } from "react-icons/fi";
 import Banner from "../Banner";
 import axios from "axios";
-import { GiftCardItem } from "../../../context/Type";
+import { getGiftCards } from "../../../services/giftCardService";
+import type { GiftCard as GiftCardType } from "../../../types/giftCard";
 
-interface ApiResponse {
-  success: boolean;
-  count: number;
-  data: GiftCardItem[];
-}
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 const AllGiftCard = () => {
-  const [giftCards, setGiftCards] = useState<GiftCardItem[]>([]);
+  const [giftCards, setGiftCards] = useState<GiftCardType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -25,21 +19,14 @@ const AllGiftCard = () => {
       setError("");
 
       try {
-        const response = await axios.get<ApiResponse>(`${apiUrl}/gift-cards`);
-        
-        if (response.data.success && response.data.data?.length > 0) {
-          // Process cards to ensure consistent data structure
-          const processedCards = response.data.data.map(card => ({
-            ...card,
-            // Ensure we have at least one image source
-            image: card.image || card.media[0]?.image || ""
-          }));
-          setGiftCards(processedCards);
+        const response = await getGiftCards();
+
+        if (Array.isArray(response) && response.length > 0) {
+          setGiftCards(response);
         } else {
           setError("No gift cards available.");
         }
       } catch (err) {
-        console.error("Fetch error:", err);
         setError(
           axios.isAxiosError(err) && err.response?.data?.message
             ? err.response.data.message

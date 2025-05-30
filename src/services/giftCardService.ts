@@ -1,78 +1,113 @@
 // src/services/giftCardService.ts
-import axios from 'axios';
+import { GiftCard, content } from '../types/giftCard';
+import api from './api';
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  // @param formData - An object containing the gift card form data. This includes
 
-interface CartItem {
-  giftCardId: string;
-  price: number;
-  quantity: number;
-}
+  //@returns A promise that resolves to the created `GiftCard` object.
 
-interface UpdateCartItemPayload {
-  quantity?: number;
-  price?: number;
-  operation?: 'increment' | 'decrement';
-}
-
-class GiftCardService {
-  // Add item to cart
-  static async addToCart(item: CartItem): Promise<void> {
-    const token = localStorage.getItem('token');
-    await axios.post(`${apiUrl}/cart`, item, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+  export const getGiftCards = async (): Promise<GiftCard[]> => {
+    try {
+      const response = await api.get('/gift-cards');
+      if (response.data.success && Array.isArray(response.data.data)) {
+        return response.data.data.map((card: GiftCard) => {
+          let descriptionContent: content[] = [];
+          try {
+            let descObj: unknown = card.description;
+            if (typeof descObj === 'string') {
+              descObj = JSON.parse(descObj);
+            }
+            // Handle both array and string content
+            if (
+              descObj &&
+              typeof descObj === 'object' &&
+              'content' in descObj
+            ) {
+              const contentValue = (descObj as { content: unknown }).content;
+              if (Array.isArray(contentValue)) {
+                descriptionContent = contentValue.map((desc: content) => ({
+                  title: desc.title,
+                  description: desc.description,
+                  type: desc.type
+                }));
+              } else if (typeof contentValue === 'string') {
+                // If content is a string, wrap it in a content[] with type 'text'
+                descriptionContent = [{
+                  title: '',
+                  description: contentValue,
+                  type: 'text'
+                }];
+              }
+            }
+          } catch {
+            descriptionContent = [];
+          }
+          return {
+            ...card,
+            image: card.image || card.media?.[0]?.image || card.media?.[0]?.publicId,
+            description: descriptionContent,
+          };
+        });
       }
-    });
-  }
+    } catch (error) {
+      console.error('Error fetching gift cards:', error);
+    }
+    return [];
+  };
 
-  // Remove item from cart
-  static async removeFromCart(giftCardId: string): Promise<void> {
-    const token = localStorage.getItem('token');
-    await axios.delete(`${apiUrl}/cart/${giftCardId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-  }
 
-  // Clear entire cart
-  static async clearCart(): Promise<void> {
-    const token = localStorage.getItem('token');
-    await axios.delete(`${apiUrl}/cart`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-  }
-
-  // Get user's cart
-  static async getCart(): Promise<{
-    items: CartItem[];
-    total: number;
-    count: number;
-  }> {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${apiUrl}/cart`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    return response.data;
-  }
-
-  // Update cart item
-  static async updateCartItem(
-    giftCardId: string,
-    updates: UpdateCartItemPayload
-  ): Promise<void> {
-    const token = localStorage.getItem('token');
-    await axios.put(`${apiUrl}/cart/${giftCardId}`, updates, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-  }
-}
-
-export default GiftCardService;
+export const getGiftCardById = async (id: string): Promise<GiftCard | null> => {
+    try {
+        const response = await api.get(`/gift-cards/${id}`);
+        if (response.data.success && response.data.data) {
+            const card = response.data.data;
+            let descriptionContent: content[] = [];
+            try {
+                let descObj: unknown = card.description;
+                if (typeof descObj === 'string') {
+                    descObj = JSON.parse(descObj);
+                }
+                if (
+                    descObj &&
+                    typeof descObj === 'object' &&
+                    'content' in descObj
+                ) {
+                    const contentValue = (descObj as { content: unknown }).content;
+                    if (Array.isArray(contentValue)) {
+                        descriptionContent = contentValue.map((desc: content) => ({
+                            title: desc.title,
+                            description: desc.description,
+                            type: desc.type
+                        }));
+                    } else if (typeof contentValue === 'string') {
+                        descriptionContent = [{
+                            title: '',
+                            description: contentValue,
+                            type: 'text'
+                        }];
+                    }
+                }
+            } catch {
+                descriptionContent = [];
+            }
+            return {
+                ...card,
+                image: card.image || card.media?.[0]?.image || card.media?.[0]?.publicId,
+                description: descriptionContent,
+            };
+        }
+    } catch (error) {
+        console.error('Error fetching gift card details:', error);
+    }
+    return null;
+};
+//Helper function to safely parse description
+// const parseDescription = (description: string | content[]): content[] => {
+//   if (Array.isArray(description)) return description;
+//   try {
+//     const parsed = JSON.parse(description);
+//     return Array.isArray(parsed.content) ? parsed.content : [];
+//   } catch {
+//     return [];
+//   }
+// };

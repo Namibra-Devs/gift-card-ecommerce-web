@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Account from "./user/Account";
-import Orders from "./orders/Orders";
+import Orders from "../orders/Orders";
 import Security from "./security/Security";
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";

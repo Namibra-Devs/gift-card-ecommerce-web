@@ -1,11 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
-import { GiftCardItem } from "../../context/cart/Type";
+import { GiftCard } from "../../types/giftCard";
 
 interface GiftCardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  giftCard: GiftCardItem;
+  giftCard: GiftCard;
   selectedAmount: number | null;
 }
 

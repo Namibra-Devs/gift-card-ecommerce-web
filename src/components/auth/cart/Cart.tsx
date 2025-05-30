@@ -23,7 +23,7 @@ const Cart = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const {
-    cart,
+    cart = { items: [], total: 0 },
     incrementQuantity,
     decrementQuantity,
     fetchCart,
@@ -93,15 +93,14 @@ const Cart = () => {
               <p className="text-gray-500">Your cart is empty</p>
             ) : (
               <ul className="space-y-4">
-                {cart.items.map((item) => (
-                  <li key={item.giftCardId} className="border-b border-gray-200 pb-4">
-                    <CartItem
-                      item={item}
-                      onIncrease={() => incrementQuantity(item.giftCardId)}
-                      onDecrease={() => decrementQuantity(item.giftCardId)}
-                      onRemove={() => removeFromCart(item.giftCardId)}
-                    />
-                  </li>
+                {cart.items.map((item: { giftCardId: any; price?: number; quantity?: number; name?: string | undefined; image?: string | undefined; isSaved?: boolean | undefined; isAvailable?: boolean | undefined; availableStock?: number | undefined; }) => (
+                  <CartItem
+                    key={item.giftCardId}
+                    item={item}
+                    onIncrease={() => incrementQuantity(item.giftCardId)}
+                    onDecrease={() => decrementQuantity(item.giftCardId)}
+                    onRemove={() => removeFromCart(item.giftCardId)}
+                  />
                 ))}
               </ul>
             )}
@@ -112,7 +111,7 @@ const Cart = () => {
             <div className="mb-6 border-t pt-4">
               <h2 className="text-sm font-medium mb-4 text-red-600">Unavailable Items</h2>
               <ul className="space-y-4">
-                {cart.unavailableItems.map((item) => (
+                {cart.unavailableItems.map((item: { giftCardId: any; price?: number; quantity?: number; name?: string | undefined; image?: string | undefined; isSaved?: boolean | undefined; isAvailable?: boolean | undefined; availableStock?: number | undefined; }) => (
                   <li key={item.giftCardId} className="border-b border-gray-200 pb-4 opacity-60">
                     <CartItem
                       item={item}
@@ -230,7 +229,7 @@ const Cart = () => {
         <CartPaymentModal
           isOpen={showCartPaymentModal}
           onClose={() => setShowCartPaymentModal(false)}
-          cartItems={cart.items.map(item => ({
+          cartItems={cart.items.map((item: { _id: any; giftCardId: any; name: any; image: any; price: any; quantity: any; }) => ({
             _id: item._id || '',
             giftCardId: item.giftCardId,
             name: item.name,
@@ -239,7 +238,7 @@ const Cart = () => {
             quantity: item.quantity,
           }))}
           totalAmount={((cart as any).totalAmount || 0)}
-          onPaymentSuccess={(paymentData) => {
+          onPaymentSuccess={(paymentData: any) => {
             handlePaymentSuccess(paymentData);
             // Refresh cart after successful payment
             fetchCart();

@@ -22,6 +22,7 @@ const CartCard: React.FC<{ item: CartItem }> = ({ item }) => {
               {/* Product image */}
               <div className="w-20 h-10">
                 <img src={item.image} alt={item.name} className="object-contain" />
+                <img src={item.image} alt={item.name} className="object-contain" />
               </div>
               {/* Product Name and Price */}
               <div className="flex flex-col items-start gap-1">

@@ -27,7 +27,7 @@ const GiftCardDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [card, setCard] = useState<GiftCardDetails | null>(null);
+  const [card, setCard] = useState<GiftCard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -189,7 +189,7 @@ const GiftCardDetails = () => {
             {[1, 2, 3, 4].map((i) => (
               <img
                 key={i}
-                src={card.media[0]?.image || card.image || '/placeholder.jpg'}
+                src={card.media?.[0]?.image || card.image}
                 alt=""
                 className="w-full h-14 object-cover"
               />
@@ -219,18 +219,20 @@ const GiftCardDetails = () => {
 
             {expandedSections.description && (
               <div className="mt-3 text-grey">
-                {typeof card.description === 'string' ? (
-                  <p>{card.description}</p>
-                ) : (
-                  <div>
-                    {card.description?.content?.map((section: { title?: string; description: string }, index: number) => (
-                      <div key={index} className="mb-4">
-                        {section.title && <h3 className="font-semibold mb-2">{section.title}</h3>}
-                        <div dangerouslySetInnerHTML={{ __html: section.description }} />
-                      </div>
-                    ))}
+              {typeof card.description === 'string' ? (
+                <p>{card.description}</p>
+              ) : (
+                <div>
+                {card.description?.map((section: { title?: string; description: string }, index: number) => {
+                  return (
+                  <div key={index} className="mb-4">
+                    {section.title && <h3 className="font-semibold mb-2">{section.title}</h3>}
+                    <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(section.description) }} />
                   </div>
-                )}
+                  );
+                })}
+                </div>
+              )}
               </div>
             )}
           </section>
