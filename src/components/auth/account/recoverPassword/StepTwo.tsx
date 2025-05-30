@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 const StepTwo = () => {
   const [resent, setResent] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("example@example.com");
+  const [email, setEmail] = useState<string>("");
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
       // Save email and userId to local storage whenever it changes
       localStorage.setItem("userData", JSON.stringify({ email, userId }));
     }, [email, userId]);
-    
+
   useEffect(() => {
     // Retrieve email from local storage
     const storedEmail = JSON.parse(localStorage.getItem('userData') || "");
@@ -25,14 +25,14 @@ const StepTwo = () => {
 
   const handleResend = async () => {
     setResent(true);
-    
+
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     try {
       // Simulate API request (Replace with actual API endpoint)
       const response = await axios.post(`${apiUrl}/auth/forgot-password`, { email });
 
       if (response.data.success) {
-        // Store in URL as a query parameter      
+        // Store in URL as a query parameter
         const fetchedUserId = response.data.data.userId;
         console.log(fetchedUserId);
         const currentUrl = new URL(window.location.href);
@@ -68,7 +68,7 @@ const StepTwo = () => {
 
         <p className="text-gray-600 mb-6">
           An email with instructions to verify your email address has been sent
-          to <strong >{email}</strong> 
+          to <strong >{email}</strong>
           <button
             type="button"
             onClick={handleContinue}
@@ -77,7 +77,7 @@ const StepTwo = () => {
           > Continue and setup your new password
           </button>
         </p>
-        
+
 
         <p className="text-gray-600 text-center">
           Haven’t received a verification code in your email?

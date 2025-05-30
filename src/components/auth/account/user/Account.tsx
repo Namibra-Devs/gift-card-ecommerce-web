@@ -13,12 +13,12 @@ type UserField = "phone" | "firstName" | "lastName" | "email" | "userName";
 const Account = () => {
   const { user, loading } = UseAuthProfile();
   const [userData, setUserData] = useState({
-    phone: user?.phone || "+233 02444444444",
+    phone: user?.phone || "",
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
-    userName: user?.userName || "username",
-    email: user?.email || "example@example.com",
-    secondaryEmail: user?.secondaryEmail || "secondaryEmail@new.com",
+    userName: user?.userName || "",
+    email: user?.email || "",
+    secondaryEmail: user?.secondaryEmail || "",
   });
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -43,6 +43,20 @@ const Account = () => {
   const [emailOtpModalOpen, setEmailOtpModalOpen] = useState(false);
   const [emailOtp, setEmailOtp] = useState<string[]>(new Array(5).fill(""));
   const [pendingEmail, setPendingEmail] = useState("");
+
+  // Update userData when user data loads
+  useEffect(() => {
+    if (user) {
+      setUserData({
+        phone: user.phone || "",
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        userName: user.userName || "",
+        email: user.email || "",
+        secondaryEmail: user.secondaryEmail || "",
+      });
+    }
+  }, [user]);
 
   const handleEdit = (field: UserField) => {
     setEditField(field);
@@ -180,7 +194,9 @@ const Account = () => {
               {field.replace(/([A-Z])/g, " $1")}
             </span>
             <div className="flex items-center justify-end gap-6">
-              <span className="text-grey">{userData[field]}</span>
+              <span className="text-grey">
+                {userData[field] || <span className="italic text-gray-400">Not set</span>}
+              </span>
               <button
                 onClick={() => handleEdit(field)}
                 className="bg-greynormal text-white hover:bg-grey duration-700 rounded-[9px] py-[13px] px-[24px] hidden md:block"
@@ -204,7 +220,9 @@ const Account = () => {
         <div className="bg-white md:bg-greylight min-w-fit px-6 py-7 rounded-[16px] flex justify-between items-center">
           <span className="text-greynormal">Email</span>
           <div className="flex items-center justify-end gap-6">
-            <span className="text-grey">{userData.secondaryEmail}</span>
+            <span className="text-grey">
+              {userData.secondaryEmail || <span className="italic text-gray-400">No email linked</span>}
+            </span>
             <button
               onClick={() => setEmailLinkModal(true)}
               className="bg-greynormal text-white hover:bg-grey duration-700 rounded-[9px] py-[13px] px-[24px] hidden md:block"
