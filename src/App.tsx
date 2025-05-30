@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 import RecoverPassword from "./pages/auth/RecoverPassword";
 import UpdatePassword from "./pages/auth/UpdatePassword";
 import { useAuth } from "./context/useAuth";
@@ -16,21 +16,12 @@ import PageNotFoundPage from './pages/PageNotFoundPage';
 import Account from './pages/auth/Account';
 
 const App: React.FC = () => {
-  const { isAuthenticated, logoutSignInMessage } = useAuth();
+  const { isAuthenticated } = useAuth();
   const hideFooterRoutes = ["/login", "/register", "*"];
   const hideNavbarRoutes = ["/login", "/register", "*"];
 
   return (
     <Router>
-       <div className="flex items-center justify-center">
-       {logoutSignInMessage && (
-          <span
-            className="absolute top-5 bg-white text-grey text-xs border-l-2 rounded-md border-yellow-400 px-4 py-2 transition-transform duration-500 ease-in-out translate-y-[-50px] opacity-0 animate-show">
-            {logoutSignInMessage}
-          </span>
-        )}
-       </div>
-        
         <>
           {/* Conditionally render Footer */}
           {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}

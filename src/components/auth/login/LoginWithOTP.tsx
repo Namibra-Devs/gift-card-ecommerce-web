@@ -1,14 +1,15 @@
-
 import React, { useState, useEffect } from "react";
 import { BiLoader } from "react-icons/bi";
 // import { FaExclamation } from "react-icons/fa6";
-import { useAuth } from "../../context/useAuth";
+import { useAuth } from "../../../context/useAuth";
 
 const LoginWithOTP = () => {
   const [email, setEmail] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [otp, setOtp] = useState("");
-  const [status, setStatus] = useState<"idle" | "processing" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "processing" | "success" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const { sendOtp, verifyOtp, message, setMessage, step } = useAuth();
 
@@ -55,34 +56,33 @@ const LoginWithOTP = () => {
   };
 
   // Handle OTP Verification
-const handleOtpSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setStatus("processing");
-  setErrorMessage("");
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("processing");
+    setErrorMessage("");
 
-  if (!otp){
-    setErrorMessage("Enter OTP!");
-    setTimeout(() => setStatus('idle'), 2000);
-  }
-  try {
-    await verifyOtp(otp);
-  } catch (error) {
-    console.error(error);
-    setErrorMessage("Failed to verify OTP. Please try again.");
-    setStatus("error");
-  } finally {
-    setTimeout(() => setStatus("idle"), 2000);
-  }
-};
-
+    if (!otp) {
+      setErrorMessage("Enter OTP!");
+      setTimeout(() => setStatus("idle"), 2000);
+    }
+    try {
+      await verifyOtp(otp);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Failed to verify OTP. Please try again.");
+      setStatus("error");
+    } finally {
+      setTimeout(() => setStatus("idle"), 2000);
+    }
+  };
 
   return (
     <section className="bg-greylight flex flex-col justify-center items-center h-screen p-4 relative">
       {/* Status Message */}
-        <span className="flex py-2 px-4 rounded text-sm text-gray-400 absolute top-7">
-         <p className="text-green-500"> {message}</p>
-         <p className="text-warningactive"> {errorMessage}</p>
-        </span>
+      <span className="flex py-2 px-4 rounded text-sm text-gray-400 absolute top-7">
+        <p className="text-green-500"> {message}</p>
+        <p className="text-warningactive"> {errorMessage}</p>
+      </span>
 
       {/* Form */}
       <form
@@ -143,7 +143,8 @@ const handleOtpSubmit = async (e: React.FormEvent) => {
                   </label>
                 </div>
                 <a
-                  href="/recover-password" target="_blank"
+                  href="/recover-password"
+                  target="_blank"
                   className="underline text-linkcolor"
                 >
                   Forgot password?

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { UseAuthProfile } from "../../../context/profile/UseAuthProfile";
+import { UseAuthProfile } from "../../../../context/profile/UseAuthProfile";
 import LinkEmailModal from "./modals/LinkEmailModal";
 import AccountEditModal from "./modals/AccountEditModal";
 import { countries } from "../../register/CountryCodes";
 import NotificationModal from "./modals/NotificationModal";
 import EmailOtpVerificationModal from "./modals/EmailOtpVerificationModal";
-import { VerifyResponse } from "../../../context/authTypes";
+import { VerifyResponse } from "../../../../context/authTypes";
 
 type UserField = "phone" | "firstName" | "lastName" | "email" | "userName";
 
@@ -32,7 +32,10 @@ const Account = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const userId = localStorage.getItem("userId");
 
-  const [notification, setNotification] = useState<{type: "success" | "error"; message: string;} | null>(null);
+  const [notification, setNotification] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const [emailLinkModal, setEmailLinkModal] = useState(false);
   const [emailToLink, setEmailToLink] = useState("");
 
@@ -59,7 +62,6 @@ const Account = () => {
 
   const handleSave = async () => {
     try {
-
       if (!userId) throw new Error("User ID not found in local storage.");
       if (!editField) return;
 
@@ -85,7 +87,7 @@ const Account = () => {
         "success",
         `${editField.replace(/([A-Z])/g, " $1")} updated successfully`
       );
-    window.location.reload();
+      window.location.reload();
     } catch (error) {
       console.error("Update failed:", error);
       showNotification("error", `Failed to update ${editField}`);
@@ -113,29 +115,28 @@ const Account = () => {
     }
   }, [emailOtp]);
 
-  const verifyEmailOtp = async(otp: string) => {
-
-        const response = await axios.post<VerifyResponse>(
-             `${apiUrl}/auth/verify`,
-             {
-               verificationCode: otp,
-               userId: userId,
-             },
-             {
-               headers: {
-                 'Content-Type': 'application/json',
-               },
-             }
-           );
-
-      if (response.data.success) {
-        setUserData((prev) => ({ ...prev, email: pendingEmail }));
-        setEmailOtpModalOpen(false);
-        showNotification("success", "Email linked successfully");
-        setEmailOtp(new Array(5).fill(""));
-      } else {
-        showNotification("error", "Invalid verification code");
+  const verifyEmailOtp = async (otp: string) => {
+    const response = await axios.post<VerifyResponse>(
+      `${apiUrl}/auth/verify`,
+      {
+        verificationCode: otp,
+        userId: userId,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
+    );
+
+    if (response.data.success) {
+      setUserData((prev) => ({ ...prev, email: pendingEmail }));
+      setEmailOtpModalOpen(false);
+      showNotification("success", "Email linked successfully");
+      setEmailOtp(new Array(5).fill(""));
+    } else {
+      showNotification("error", "Invalid verification code");
+    }
   };
 
   const resendEmailOtp = () => {
@@ -149,9 +150,9 @@ const Account = () => {
       secondaryEmail: emailToLink,
     });
 
-    if(!response.data.success){
+    if (!response.data.success) {
       showNotification("error", "Failed to link email. Please try again.");
-        return;
+      return;
     }
     showNotification("success", "Email linked successfully");
     setEmailOtpModalOpen(true);

@@ -1,11 +1,11 @@
-import AccountContent from "../../components/account/AccountContent"
+import AccountContent from "../../components/auth/account/AccountContent";
 
 const Account = () => {
   return (
     <>
-      <AccountContent/>
+      <AccountContent />
     </>
-  )
-}
+  );
+};
 
-export default Account
+export default Account;
