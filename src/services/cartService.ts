@@ -16,13 +16,7 @@ interface UpdateCartItemPayload {
 class GiftCartService {
   // Add item to cart
   static async addToCart(item: CartItem): Promise<void> {
-    const token = localStorage.getItem('token');
-    await api.post(`/cart`, item, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      }
-    });
+    await api.post(`/cart`, item);
   }
 
   // Remove item from cart
@@ -36,14 +30,25 @@ class GiftCartService {
     }
 
     // Get user's cart
-    static async getCart(): Promise<{
-    items: CartItem[];
-    total: number;
-    count: number;
-    }> {
-    const response = await api.get(`/cart`);
+static async getCart() {
+  try {
+    const response = await api.get("/cart");
     return response.data;
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error &&
+      typeof (error as { response?: { status?: number } }).response === "object" &&
+      (error as { response?: { status?: number } }).response !== null &&
+      (error as { response?: { status?: number } }).response?.status === 401
+    ) {
+      // Return a special value or throw a custom error
+      return { unauthorized: true };
     }
+    throw error;
+  }
+}
 
     // Update cart item
     static async updateCartItem(
