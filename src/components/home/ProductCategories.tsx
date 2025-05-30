@@ -22,7 +22,7 @@ const ProductCategories = () => {
 
   return (
     <div className="">
-        <div className="flex items-center gap-2 md:gap-6 w-full border-b border-greylight px-4 md:px-[255px] pb-6 scrollbar-hide overflow-x-auto -ms-overflow-style: none scrollbar-width: none">
+        <div className="flex items-center gap-2 md:gap-6 w-full px-4 md:px-[255px] pb-6 scrollbar-hide overflow-x-auto -ms-overflow-style: none scrollbar-width: none">
             <button onClick={() => setFilter("AllGiftCard")} className={`px-[16px] py-[10px] rounded-[8px] ${filter === "AllGiftCard" ? "bg-greylight text-greynormal" : "bg-white text-greynormal"}`}>All Gift Cards</button>
             <button onClick={() => setFilter("AppStore")} className={`px-[16px] py-[10px] rounded-[8px] ${filter === "AppStore" ? "bg-greylight text-greynormal" : "bg-white text-greynormal"}`}>App Store</button>
             <button onClick={() => setFilter("Shopping")} className={`px-[16px] py-[10px] rounded-[8px] ${filter === "Shopping" ? "bg-greylight text-greynormal" : "bg-white text-greynormal"}`}>Shopping</button>

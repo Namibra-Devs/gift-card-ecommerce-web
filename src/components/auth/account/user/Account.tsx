@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { UseAuthProfile } from "../../../context/profile/UseAuthProfile";
+import { UseAuthProfile } from "../../../../context/profile/UseAuthProfile";
 import LinkEmailModal from "./modals/LinkEmailModal";
 import AccountEditModal from "./modals/AccountEditModal";
 import { countries } from "../../register/CountryCodes";
 import NotificationModal from "./modals/NotificationModal";
 import EmailOtpVerificationModal from "./modals/EmailOtpVerificationModal";
-import { VerifyResponse } from "../../../context/authTypes";
+import { VerifyResponse } from "../../../../context/authTypes";
 
-type UserField = "phone" | "firstName" | "lastName" | "email" | "username";
+type UserField = "phone" | "firstName" | "lastName" | "email" | "userName";
 
 const Account = () => {
   const { user, loading } = UseAuthProfile();
@@ -16,7 +16,7 @@ const Account = () => {
     phone: user?.phone || "+233 02444444444",
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
-    username: user?.username || "username",
+    userName: user?.userName || "username",
     email: user?.email || "example@example.com",
     secondaryEmail: user?.secondaryEmail || "secondaryEmail@new.com",
   });
@@ -47,13 +47,13 @@ const Account = () => {
   const handleEdit = (field: UserField) => {
     setEditField(field);
     if (field === "phone") {
-      // Split existing phone number into country code and number
-      const [code, ...numberParts] = userData.phone.split(" ");
-      const number = numberParts.join(" ");
-      const country = countries.find((c) => c.code === code) || countries[0];
+      // // Split existing phone number into country code and number
+      // const [code, ...numberParts] = userData.phone.split(" ");
+      // const number = numberParts.join(" ");
+      const country = countries.find((c) => c.code === "+233") || countries[0];
       setSelectedCountry(country);
-      setPhoneNumber(number);
-      setInputValue(number);
+      setPhoneNumber(userData.phone);
+      setInputValue(userData.phone);
     } else {
       setInputValue(userData[field]);
     }
@@ -62,7 +62,6 @@ const Account = () => {
 
   const handleSave = async () => {
     try {
-
       if (!userId) throw new Error("User ID not found in local storage.");
       if (!editField) return;
 
@@ -88,6 +87,7 @@ const Account = () => {
         "success",
         `${editField.replace(/([A-Z])/g, " $1")} updated successfully`
       );
+      window.location.reload();
     } catch (error) {
       console.error("Update failed:", error);
       showNotification("error", `Failed to update ${editField}`);
@@ -115,29 +115,28 @@ const Account = () => {
     }
   }, [emailOtp]);
 
-  const verifyEmailOtp = async(otp: string) => {
-
-        const response = await axios.post<VerifyResponse>(
-             `${apiUrl}/auth/verify`,
-             {
-               verificationCode: otp,
-               userId: userId,
-             },
-             {
-               headers: {
-                 'Content-Type': 'application/json',
-               },
-             }
-           );
-
-      if (response.data.success) {
-        setUserData((prev) => ({ ...prev, email: pendingEmail }));
-        setEmailOtpModalOpen(false);
-        showNotification("success", "Email linked successfully");
-        setEmailOtp(new Array(5).fill(""));
-      } else {
-        showNotification("error", "Invalid verification code");
+  const verifyEmailOtp = async (otp: string) => {
+    const response = await axios.post<VerifyResponse>(
+      `${apiUrl}/auth/verify`,
+      {
+        verificationCode: otp,
+        userId: userId,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
+    );
+
+    if (response.data.success) {
+      setUserData((prev) => ({ ...prev, email: pendingEmail }));
+      setEmailOtpModalOpen(false);
+      showNotification("success", "Email linked successfully");
+      setEmailOtp(new Array(5).fill(""));
+    } else {
+      showNotification("error", "Invalid verification code");
+    }
   };
 
   const resendEmailOtp = () => {
@@ -151,9 +150,9 @@ const Account = () => {
       secondaryEmail: emailToLink,
     });
 
-    if(!response.data.success){
+    if (!response.data.success) {
       showNotification("error", "Failed to link email. Please try again.");
-        return;
+      return;
     }
     showNotification("success", "Email linked successfully");
     setEmailOtpModalOpen(true);
@@ -174,7 +173,7 @@ const Account = () => {
       <h2 className="mb-4">Profile</h2>
       <div className="bg-white md:bg-greylight min-w-fit px-6 py-3 rounded-[16px]">
         {(
-          ["firstName", "lastName", "username", "email", "phone"] as UserField[]
+          ["firstName", "lastName", "userName", "email", "phone"] as UserField[]
         ).map((field) => (
           <div key={field} className="flex items-center justify-between py-3">
             <span className="capitalize font-medium text-grey md:text-greynormal">

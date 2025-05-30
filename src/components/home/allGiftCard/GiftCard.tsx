@@ -1,9 +1,9 @@
 // GiftCard.tsx
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { GiftCardItem } from "../../../context/Type";
+import type { GiftCard as GiftCardType } from "../../../types/giftCard";
 
-const GiftCard = ({ item }: { item: GiftCardItem }) => {
+const GiftCard = ({ item }: { item: GiftCardType }) => {
   const navigate = useNavigate();
 
   return (
@@ -17,7 +17,7 @@ const GiftCard = ({ item }: { item: GiftCardItem }) => {
     >
       <div className="relative max-w-[317px] min-h-[180px] w-full aspect-video bg-gray-100 hover:border hover:border-border  rounded-[16px] overflow-hidden">
         <img
-          src={item.image || item.media[0]?.image || "/placeholder.jpg"}
+          src={item.image || item.media?.[0]?.image || "/placeholder.jpg"}
           alt={item.name}
           className="absolute inset-0 w-full h-full object-contain p-10"
           onError={(e) => {

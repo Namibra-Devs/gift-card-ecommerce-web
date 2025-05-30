@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { FiTrash2 } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import CartItem from "./CartItem";
-import { useCartContext } from "../../context/cart/CartContext";
+import { useCartContext } from "../../../context/cart/CartContext";
 
 interface CartItem {
   giftCardId: string;
@@ -14,12 +15,12 @@ interface CartItem {
 const Cart = () => {
   const [promoCode, setPromoCode] = useState("");
   const {
-    cart,
+    cart = { items: [], total: 0 },
     incrementQuantity,
     decrementQuantity,
     fetchCart,
     removeFromCart,
-    clearCart
+    clearCart,
   } = useCartContext();
 
   useEffect(() => {
@@ -30,9 +31,10 @@ const Cart = () => {
         console.error("Failed to load cart:", error);
       }
     };
-    
+
     loadCart();
-  }, [fetchCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   return (
     <div className="bg-greylight min-h-screen">
@@ -41,36 +43,38 @@ const Cart = () => {
         <div className="bg-white rounded-[8px] p-4 w-full md:max-w-[70%]">
           <h1 className="text-sm font-medium mb-6">Your Cart</h1>
 
-          {/* Cart Items List */}
-          <div className="mb-6">
-            {cart.items.length === 0 ? (
-              <p className="text-gray-500">Your cart is empty</p>
-            ) : (
-              <ul className="space-y-4">
+          {cart.items.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-gray-500 mb-4">Your cart is empty</p>
+              <Link
+                to="/gift-cards"
+                className="text-blue-600 hover:text-blue-800"
+              >
+                Browse Gift Cards
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="mb-6 space-y-4">
                 {cart.items.map((item) => (
-                  <li key={item.giftCardId} className="border-b border-gray-200 pb-4">
-                    <CartItem
-                      item={item}
-                      onIncrease={() => incrementQuantity(item.giftCardId)}
-                      onDecrease={() => decrementQuantity(item.giftCardId)}
-                      onRemove={() => removeFromCart(item.giftCardId)}
-                    />
-                  </li>
+                  <CartItem
+                    key={item.giftCardId}
+                    item={item}
+                    onIncrease={() => incrementQuantity(item.giftCardId)}
+                    onDecrease={() => decrementQuantity(item.giftCardId)}
+                    onRemove={() => removeFromCart(item.giftCardId)}
+                  />
                 ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Clear Cart Button */}
-          {cart.items.length > 0 && (
-            <button
-              title="Clear Cart"
-              onClick={clearCart}
-              className="flex items-center text-red-500 hover:text-red-700 text-sm"
-            >
-              <FiTrash2 size={16} className="mr-1" />
-              Remove All Items
-            </button>
+              </div>
+              <button
+                type="button"
+                onClick={clearCart}
+                className="flex items-center text-red-500 hover:text-red-700 text-sm"
+              >
+                <FiTrash2 size={16} className="mr-1" />
+                Remove All Items
+              </button>
+            </>
           )}
         </div>
 

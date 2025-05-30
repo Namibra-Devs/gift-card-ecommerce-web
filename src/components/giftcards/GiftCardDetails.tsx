@@ -1,33 +1,20 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from "axios";
 import { FaUser } from "react-icons/fa6";
 import { FiArrowLeft } from "react-icons/fi";
 import BuyAsGiftModal from "./BuyAsGiftModal";
 import { useAuth } from "../../context/useAuth";
 import { useCartContext } from '../../context/cart/CartContext';
-
-interface GiftCardDetails {
-  _id: string;
-  name: string;
-  description: string | { content: { title?: string; description: string }[] };
-  pricing: number[];
-  media: { image: string }[];
-  stock: number;
-  inStock: boolean;
-  image?: string;
-  min_price?: number;
-  max_price?: number;
-}
-
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+import { getGiftCardById } from "../../services/giftCardService";
+import { GiftCard } from "../../types/giftCard";
+import { sanitizeHtml } from "../../utils/sanitizeHtml";
 
 const GiftCardDetails = () => {
   const { addToCart} = useCartContext();
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [card, setCard] = useState<GiftCardDetails | null>(null);
+  const [card, setCard] = useState<GiftCard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -50,14 +37,15 @@ const GiftCardDetails = () => {
   useEffect(() => {
     const fetchGiftCardDetails = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/gift-cards/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        
-        if (response.data.success) {
-          setCard(response.data.data);
+        if (!id) {
+          setError('Gift card ID is missing');
+          setLoading(false);
+          return;
+        }
+        const response = await getGiftCardById(id);
+
+        if (response) {
+          setCard(response);
         } else {
           setError('Gift card not found');
         }
@@ -109,38 +97,22 @@ const GiftCardDetails = () => {
       return;
     }
 
+    if (!card) {
+      setCartMessage('Gift card details are not available.');
+      return;
+    }
+
     try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL;
-      
-      if (!card) {
-        setCartMessage('Gift card details are not available.');
-        return;
-      }
-
-      const response = await axios.post(
-        `${apiUrl}/cart`,
-          addToCart({
-            giftCardId: card._id,
-            price: selectedAmount || parseFloat(customAmount),
-            quantity: 1,
-            name: card.name,
-            image: card.image
-          }),
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-
-      if (response.data.success) {
-        setCartMessage('Added to cart successfully!');
-        setTimeout(() => setCartMessage(''), 3000);
-      } else {
-        setCartMessage(response.data.message || 'Failed to add to cart');
-        setTimeout(() => setCartMessage(''), 3000);
-      }
-    } catch (err) {
+      await addToCart({
+        giftCardId: card._id,
+        price: amount, //0596570540
+        quantity: 1,
+        name: card.name
+      });
+      setCartMessage('Added to cart successfully!');
+      setTimeout(() => setCartMessage(''), 3000);
+      console.log()
+    } catch (err: unknown) {
       setCartMessage('Failed to add to cart. Please try again.');
       setTimeout(() => setCartMessage(''), 3000);
       console.error(err);
@@ -193,7 +165,7 @@ const GiftCardDetails = () => {
         <div className="w-full md:max-w-[50%] flex flex-col gap-8">
           <div className="bg-greylight p-12 md:p-24 flex items-center justify-center">
             <img 
-              src={card.media[0]?.image || card.image || '/placeholder.jpg'}
+              src={card.media?.[0]?.image || card.image}
               alt={card.name}
               className="max-h-80 object-contain"
             />
@@ -204,7 +176,7 @@ const GiftCardDetails = () => {
             {[1, 2, 3, 4].map((i) => (
               <img
                 key={i}
-                src={card.media[0]?.image || card.image || '/placeholder.jpg'}
+                src={card.media?.[0]?.image || card.image}
                 alt=""
                 className="w-full h-14 object-cover"
               />
@@ -234,18 +206,20 @@ const GiftCardDetails = () => {
 
             {expandedSections.description && (
               <div className="mt-3 text-grey">
-                {typeof card.description === 'string' ? (
-                  <p>{card.description}</p>
-                ) : (
-                  <div>
-                    {card.description?.content?.map((section: { title?: string; description: string }, index: number) => (
-                      <div key={index} className="mb-4">
-                        {section.title && <h3 className="font-semibold mb-2">{section.title}</h3>}
-                        <div dangerouslySetInnerHTML={{ __html: section.description }} />
-                      </div>
-                    ))}
+              {typeof card.description === 'string' ? (
+                <p>{card.description}</p>
+              ) : (
+                <div>
+                {card.description?.map((section: { title?: string; description: string }, index: number) => {
+                  return (
+                  <div key={index} className="mb-4">
+                    {section.title && <h3 className="font-semibold mb-2">{section.title}</h3>}
+                    <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(section.description) }} />
                   </div>
-                )}
+                  );
+                })}
+                </div>
+              )}
               </div>
             )}
           </section>
@@ -443,7 +417,7 @@ const GiftCardDetails = () => {
             ...card,
             description: typeof card.description === 'string' 
               ? card.description 
-              : card.description?.content.map(section => section.description).join(' ') || ''
+              : card.description?.map(section => section.description).join(' ') || ''
           }}
           selectedAmount={selectedAmount || (customAmount && !isNaN(parseFloat(customAmount)) ? parseFloat(customAmount) : null)}
         />          

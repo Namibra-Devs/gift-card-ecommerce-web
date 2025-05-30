@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 // import axios from "axios";
-import api from "../api";
+import api from "../../services/api";
 
 interface UserProfile {
   userId: string;
   firstName: string;
   lastName: string;
-  username?: string;
+  userName?: string;
   phone: string;
   email: string;
   secondaryEmail: string;
@@ -20,16 +20,13 @@ interface AuthProfileContextType {
   loading: boolean;
 }
 
-export const AuthProfileContext =
-  React.createContext<AuthProfileContextType | null>(null);
+export const AuthProfileContext = React.createContext<AuthProfileContextType | null>(null);
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export const AuthProfileProvider: React.FC<AuthProviderProps> = ({
-  children,
-}) => {
+export const AuthProfileProvider: React.FC<AuthProviderProps> = ({children}) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 

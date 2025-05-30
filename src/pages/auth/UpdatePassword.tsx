@@ -1,4 +1,4 @@
-import SetNewPassword from "../../components/account/recoverPassword/updatePassword/SetNewPassword";
+import SetNewPassword from "../../components/auth/account/recoverPassword/updatePassword/SetNewPassword";
 
 const UpdatePassword = () => {
   return (

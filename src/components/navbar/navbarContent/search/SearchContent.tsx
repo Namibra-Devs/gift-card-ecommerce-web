@@ -1,17 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { GiftCardItem } from "../../../../context/Type";
+import { GiftCard } from "../../../../types/giftCard";
 import { BiLoaderCircle } from "react-icons/bi";
 
 interface SearchContentProps {
   query: string;
-  results: GiftCardItem[];
+  results: GiftCard[];
   isLoading: boolean;
   onClose: () => void;
 }
 
-const SearchContent: React.FC<SearchContentProps> = ({ query, results, isLoading,onClose}) => {
+const SearchContent: React.FC<SearchContentProps> = ({ query, results, isLoading, onClose}) => {
   const navigate = useNavigate();
 
   // Filter results matching the query
@@ -44,7 +44,7 @@ const SearchContent: React.FC<SearchContentProps> = ({ query, results, isLoading
             >
               <div className="flex items-center gap-2 md:gap-3">
                 <img
-                  src={item.image || item.media[0]?.image || "/placeholder.jpg"}
+                  src={item.image || item.media?.[0]?.image || "/placeholder.jpg"}
                   alt={item.name}
                   className="w-12 h-12 object-contain rounded-md"
                 />
