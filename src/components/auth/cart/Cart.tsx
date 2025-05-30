@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { FiTrash2, FiShoppingCart } from "react-icons/fi";
 import CartItem from "./CartItem";
-import { useCartContext } from "../../context/cart/CartContext";
-import PaymentModal from "../payment/PaymentModal";
-import CartPaymentModal from "../payment/CartPaymentModal";
-import { useAuth } from "../../context/useAuth";
+import { useCartContext } from "../../../context/cart/CartContext";
+import CartPaymentModal from "../../payment/CartPaymentModal";
+import { useAuth } from "../../../context/useAuth";
 import { useNavigate } from "react-router-dom";
 
 interface CartItem {
@@ -17,13 +16,11 @@ interface CartItem {
 
 const Cart = () => {
   const [promoCode, setPromoCode] = useState("");
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showCartPaymentModal, setShowCartPaymentModal] = useState(false);
-  const [selectedCartItem, setSelectedCartItem] = useState<any>(null);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const {
-    cart = { items: [], total: 0 },
+    cart,
     incrementQuantity,
     decrementQuantity,
     fetchCart,
@@ -93,7 +90,7 @@ const Cart = () => {
               <p className="text-gray-500">Your cart is empty</p>
             ) : (
               <ul className="space-y-4">
-                {cart.items.map((item: { giftCardId: any; price?: number; quantity?: number; name?: string | undefined; image?: string | undefined; isSaved?: boolean | undefined; isAvailable?: boolean | undefined; availableStock?: number | undefined; }) => (
+                {cart.items.map((item) => (
                   <CartItem
                     key={item.giftCardId}
                     item={item}
@@ -111,7 +108,7 @@ const Cart = () => {
             <div className="mb-6 border-t pt-4">
               <h2 className="text-sm font-medium mb-4 text-red-600">Unavailable Items</h2>
               <ul className="space-y-4">
-                {cart.unavailableItems.map((item: { giftCardId: any; price?: number; quantity?: number; name?: string | undefined; image?: string | undefined; isSaved?: boolean | undefined; isAvailable?: boolean | undefined; availableStock?: number | undefined; }) => (
+                {cart.unavailableItems.map((item) => (
                   <li key={item.giftCardId} className="border-b border-gray-200 pb-4 opacity-60">
                     <CartItem
                       item={item}
@@ -175,7 +172,7 @@ const Cart = () => {
             <div className="space-y-2 mb-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${((cart as any).totalAmount || 0).toFixed(2)}</span>
+                <span>${cart.totalAmount.toFixed(2)}</span>
               </div>
               {/* Add discount display when implemented */}
               {/* {discount > 0 && (
@@ -188,7 +185,7 @@ const Cart = () => {
 
             <div className="flex justify-between border-t pt-3 font-medium text-sm">
               <span>Total</span>
-              <span>${((cart as any).totalAmount || 0).toFixed(2)}</span>
+              <span>${cart.totalAmount.toFixed(2)}</span>
             </div>
           </div>
 
@@ -208,28 +205,12 @@ const Cart = () => {
         </div>
       </div>
 
-      {/* Payment Modal */}
-      {showPaymentModal && selectedCartItem && (
-        <PaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => setShowPaymentModal(false)}
-          giftCard={{
-            _id: selectedCartItem.giftCardId,
-            name: selectedCartItem.name || 'Gift Card',
-            image: selectedCartItem.image,
-          }}
-          quantity={selectedCartItem.quantity}
-          totalPrice={selectedCartItem.price * selectedCartItem.quantity}
-          onPaymentSuccess={handlePaymentSuccess}
-        />
-      )}
-
       {/* Cart Payment Modal */}
       {showCartPaymentModal && (
         <CartPaymentModal
           isOpen={showCartPaymentModal}
           onClose={() => setShowCartPaymentModal(false)}
-          cartItems={cart.items.map((item: { _id: any; giftCardId: any; name: any; image: any; price: any; quantity: any; }) => ({
+          cartItems={cart.items.map(item => ({
             _id: item._id || '',
             giftCardId: item.giftCardId,
             name: item.name,
@@ -237,7 +218,7 @@ const Cart = () => {
             price: item.price,
             quantity: item.quantity,
           }))}
-          totalAmount={((cart as any).totalAmount || 0)}
+          totalAmount={cart.totalAmount}
           onPaymentSuccess={(paymentData: any) => {
             handlePaymentSuccess(paymentData);
             // Refresh cart after successful payment

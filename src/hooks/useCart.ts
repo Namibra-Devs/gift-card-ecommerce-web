@@ -1,5 +1,5 @@
 // src/hooks/useCart.ts
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ApiService from "../services/apiService";
 import { CartItem as ApiCartItem, CartSummary } from "../types/api";
 import toast from "react-hot-toast";
